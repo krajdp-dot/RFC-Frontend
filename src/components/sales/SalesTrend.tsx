@@ -1,0 +1,102 @@
+"use client";
+
+import React, { useState } from "react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { cn } from "@/lib/utils";
+
+const data = [
+  { date: "10 Aug", sales: 120000, collections: 100000, credit: 20000 },
+  { date: "11 Aug", sales: 150000, collections: 110000, credit: 40000 },
+  { date: "12 Aug", sales: 130000, collections: 130000, credit: 0 },
+  { date: "13 Aug", sales: 180000, collections: 140000, credit: 40000 },
+  { date: "14 Aug", sales: 140000, collections: 150000, credit: -10000 },
+  { date: "15 Aug", sales: 200000, collections: 180000, credit: 20000 },
+  { date: "16 Aug", sales: 170000, collections: 120000, credit: 50000 },
+];
+
+export function SalesTrend() {
+  const [activeTab, setActiveTab] = useState("Sales");
+  const [period, setPeriod] = useState("7D");
+
+  const dataKey = activeTab.toLowerCase();
+
+  return (
+    <div className="bg-card border rounded-xl overflow-hidden flex flex-col w-full h-[350px]">
+      <div className="p-4 border-b flex items-center justify-between bg-muted/20">
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
+          {["Sales", "Collections", "Credit"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                activeTab === tab
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-1">
+          {["7D", "30D", "90D", "YTD"].map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={cn(
+                "px-2 py-1 text-xs font-medium rounded-md transition-colors",
+                period === p
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 p-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#2d6a6a" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#2d6a6a" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis 
+              dataKey="date" 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} 
+              dy={10} 
+            />
+            <YAxis 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} 
+              tickFormatter={(value) => `₹${value / 1000}k`}
+              dx={-10}
+            />
+            <Tooltip 
+              contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', backgroundColor: 'hsl(var(--background))', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+              itemStyle={{ color: 'hsl(var(--foreground))', fontSize: '14px', fontWeight: 500 }}
+              labelStyle={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', marginBottom: '4px' }}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, activeTab]}
+            />
+            <Area 
+              type="monotone" 
+              dataKey={dataKey} 
+              stroke="#2d6a6a" 
+              strokeWidth={2}
+              fillOpacity={1} 
+              fill="url(#colorValue)" 
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
