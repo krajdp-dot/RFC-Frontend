@@ -24,7 +24,7 @@ export type CreateBusinessEventInput = {
 };
 
 export async function createBusinessEvent(data: CreateBusinessEventInput) {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     // Validate double-entry accounting: Debits must equal Credits
     const sum = data.ledgerEntries.reduce((acc, entry) => acc + entry.amount, 0);
     if (sum !== 0) {
