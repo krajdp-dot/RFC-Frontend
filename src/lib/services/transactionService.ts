@@ -1,4 +1,5 @@
 import { prisma } from '../prisma';
+import type { Prisma } from '../../generated/prisma/client';
 
 export type CreateLedgerEntryInput = {
   accountId: string;
@@ -24,7 +25,7 @@ export type CreateBusinessEventInput = {
 };
 
 export async function createBusinessEvent(data: CreateBusinessEventInput) {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // Validate double-entry accounting: Debits must equal Credits
     const sum = data.ledgerEntries.reduce((acc, entry) => acc + entry.amount, 0);
     if (sum !== 0) {
@@ -79,3 +80,4 @@ export async function createBusinessEvent(data: CreateBusinessEventInput) {
 }
 
 // Higher level API functions will be implemented to compose CreateBusinessEventInput.
+
