@@ -5,17 +5,9 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const data = [
-  { date: "10 Aug", sales: 120000, collections: 100000, credit: 20000 },
-  { date: "11 Aug", sales: 150000, collections: 110000, credit: 40000 },
-  { date: "12 Aug", sales: 130000, collections: 130000, credit: 0 },
-  { date: "13 Aug", sales: 180000, collections: 140000, credit: 40000 },
-  { date: "14 Aug", sales: 140000, collections: 150000, credit: -10000 },
-  { date: "15 Aug", sales: 200000, collections: 180000, credit: 20000 },
-  { date: "16 Aug", sales: 170000, collections: 120000, credit: 50000 },
-];
 
-export function SalesTrend() {
+
+export function SalesTrend({ data = [] }: { data?: any[] }) {
   const [activeTab, setActiveTab] = useState("Sales");
   const [period, setPeriod] = useState("7D");
 

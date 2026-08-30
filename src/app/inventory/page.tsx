@@ -9,12 +9,14 @@ import { MetricStrip } from '@/components/shared/MetricStrip'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { Button } from '@/components/ui/button'
 import { fetchApi } from '@/lib/fetchApi'
+import { AddProductModal } from '@/components/inventory/AddProductModal'
 
 export default function InventoryPage() {
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [showAddProduct, setShowAddProduct] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
 
   async function loadInventory() {
@@ -56,7 +58,7 @@ export default function InventoryPage() {
       <PageHeader
         title="Inventory"
         description="Track stock levels, freshness and value."
-        primaryAction={{ label: "Stock Adjustment" }}
+        primaryAction={{ label: "Add Product", onClick: () => setShowAddProduct(true) }}
         secondaryActions={[{ label: "Import" }, { label: "Export" }]}
       />
       
@@ -151,6 +153,16 @@ export default function InventoryPage() {
           </div>
         )}
       </div>
+
+      {showAddProduct && (
+        <AddProductModal 
+          onClose={() => setShowAddProduct(false)}
+          onSuccess={() => {
+            setShowAddProduct(false);
+            loadInventory();
+          }}
+        />
+      )}
     </div>
   )
 }

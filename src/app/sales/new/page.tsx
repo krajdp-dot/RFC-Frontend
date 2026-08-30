@@ -181,13 +181,23 @@ export default function NewSalePage() {
       const payload = {
         customerId: formData.customerId,
         businessDate: formData.businessDate,
-        items: formData.items,
-        discount: formData.discount,
+        items: formData.items.map(i => ({
+          ...i,
+          rate: String(i.rate)
+        })),
+        discount: formData.discount ? String(formData.discount) : undefined,
         payments: formData.payments.filter(
           (payment) => payment.accountId && payment.amount > 0,
-        ),
+        ).map(p => ({
+          ...p,
+          amount: String(p.amount)
+        })),
         notes: formData.notes,
       };
+
+      if (!payload.payments || payload.payments.length === 0) {
+        payload.payments = [];
+      }
 
       await fetchApi("/sales", {
         method: "POST",

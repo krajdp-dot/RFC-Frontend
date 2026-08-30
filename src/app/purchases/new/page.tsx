@@ -156,9 +156,29 @@ export default function NewPurchasePage() {
     setError("");
 
     try {
+      const payload = {
+        ...formData,
+        transport: formData.transport ? String(formData.transport) : undefined,
+        loading: formData.loading ? String(formData.loading) : undefined,
+        unloading: formData.unloading ? String(formData.unloading) : undefined,
+        otherCosts: formData.otherCosts ? String(formData.otherCosts) : undefined,
+        items: formData.items.map(i => ({
+          ...i,
+          ratePerUnit: String(i.ratePerUnit)
+        })),
+        payments: formData.payments.filter(p => p.amount > 0 && p.accountId).map(p => ({
+          ...p,
+          amount: String(p.amount)
+        }))
+      };
+
+      if (!payload.payments || payload.payments.length === 0) {
+        payload.payments = [];
+      }
+
       await fetchApi("/purchases", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       router.push("/purchases");
