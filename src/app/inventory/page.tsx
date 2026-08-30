@@ -47,11 +47,11 @@ export default function InventoryPage() {
   }, []);
 
   const filteredInventory = inventory.filter((item) => 
-    item.productName?.toLowerCase().includes(search.toLowerCase())
+    item.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalValue = inventory.reduce((sum, item) => sum + (Number(item.totalValue) || 0), 0);
-  const lowStockItems = inventory.filter(item => item.totalStock <= (item.reorderThreshold || 10)).length;
+  const totalValue = inventory.reduce((sum, item) => sum + (Number(item.stockValue) || 0), 0);
+  const lowStockItems = inventory.filter(item => item.remainingBoxes <= 10).length;
 
   return (
     <div className="space-y-6 pb-10">
@@ -120,19 +120,19 @@ export default function InventoryPage() {
               </thead>
               <tbody className="divide-y">
                 {filteredInventory.map((item) => (
-                  <tr key={item.productId} className="hover:bg-muted/50 transition-colors group cursor-pointer">
+                  <tr key={item.id} className="hover:bg-muted/50 transition-colors group cursor-pointer">
                     <td className="px-4 py-3 font-medium">
-                      <Link href={`/inventory/${item.productId}`} className="hover:underline">{item.productName}</Link>
+                      <Link href={`/inventory/${item.id}`} className="hover:underline">{item.name}</Link>
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums">
-                      {item.totalStock} {item.totalBoxes ? `(${item.totalBoxes} boxes)` : ''}
+                      {item.remainingBoxes} boxes
                     </td>
-                    <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{item.unit || 'KG'}</td>
+                    <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{item.unit || 'BOX'}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
-                      {item.avgCost ? `₹${Number(item.avgCost).toFixed(2)}` : '—'}
+                      {item.stockValue && item.remainingBoxes ? `₹${(Number(item.stockValue) / item.remainingBoxes).toFixed(2)}` : '—'}
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums font-semibold">
-                      {item.totalValue ? `₹${Number(item.totalValue).toLocaleString('en-IN')}` : '—'}
+                      {item.stockValue ? `₹${Number(item.stockValue).toLocaleString('en-IN')}` : '—'}
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       {item.avgFreshness ? (

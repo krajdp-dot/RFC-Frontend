@@ -164,7 +164,7 @@ export default function NewPurchasePage() {
         otherCosts: formData.otherCosts ? String(formData.otherCosts) : undefined,
         items: formData.items.map(i => ({
           ...i,
-          ratePerUnit: String(i.ratePerUnit)
+          ratePerUnit: String(i.ratePerUnit || 0)
         })),
         payments: formData.payments.filter(p => p.amount > 0 && p.accountId).map(p => ({
           ...p,

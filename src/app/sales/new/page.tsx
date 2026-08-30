@@ -183,7 +183,7 @@ export default function NewSalePage() {
         businessDate: formData.businessDate,
         items: formData.items.map(i => ({
           ...i,
-          rate: String(i.rate)
+          rate: String(i.rate || 0)
         })),
         discount: formData.discount ? String(formData.discount) : undefined,
         payments: formData.payments.filter(

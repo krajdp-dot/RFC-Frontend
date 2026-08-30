@@ -63,8 +63,8 @@ export default function CashBanksPage() {
     }
   };
 
-  const totalBalance = accounts.reduce((sum, acc) => sum + Number(acc.currentBalance || 0), 0);
-  const expectedCash = accounts.find(a => a.type === 'CASH')?.currentBalance || 0;
+  const totalBalance = accounts.reduce((sum, acc) => sum + Number(acc.balance || 0), 0);
+  const expectedCash = accounts.find(a => a.type === 'CASH')?.balance || 0;
 
   return (
     <div className="space-y-6 pb-10">
@@ -103,7 +103,7 @@ export default function CashBanksPage() {
                   </div>
                   <span className="text-sm font-medium">{account.name}</span>
                 </div>
-                <h3 className="text-2xl font-bold tabular-nums mb-4">{formatCurrency(account.currentBalance)}</h3>
+                <h3 className="text-2xl font-bold tabular-nums mb-4">{formatCurrency(account.balance)}</h3>
               </div>
             </div>
           ))}
