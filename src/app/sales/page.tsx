@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Plus, Search, Filter } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
@@ -22,6 +23,7 @@ export default function SalesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
 
@@ -35,8 +37,8 @@ export default function SalesPage() {
         limit: "20",
       });
 
-      if (search.trim()) {
-        params.set("search", search.trim());
+      if (debouncedSearch.trim()) {
+        params.set("search", debouncedSearch.trim());
       }
 
       const response = await fetchApi(`/sales?${params.toString()}`);
@@ -62,7 +64,7 @@ export default function SalesPage() {
 
   useEffect(() => {
     loadSales();
-  }, [search, page]);
+  }, [debouncedSearch, page]);
 
   const metrics = [
     { label: "Total Sales", value: meta?.total?.toString() || sales.length.toString() },

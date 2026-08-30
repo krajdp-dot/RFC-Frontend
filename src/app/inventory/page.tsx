@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useDebounce } from "@/hooks/useDebounce";
 import { Search, Filter, MoreHorizontal, AlertTriangle } from 'lucide-react'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { MetricStrip } from '@/components/shared/MetricStrip'
@@ -14,6 +15,7 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
 
   async function loadInventory() {
     try {

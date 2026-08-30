@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
@@ -43,6 +44,7 @@ export default function SuppliersPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [form, setForm] = useState<SupplierForm>(emptyForm);
   const [page, setPage] = useState(1);
@@ -59,8 +61,8 @@ export default function SuppliersPage() {
         activeOnly: "false",
       });
 
-      if (search.trim()) {
-        params.set("search", search.trim());
+      if (debouncedSearch.trim()) {
+        params.set("search", debouncedSearch.trim());
       }
 
       const response = await fetchApi(`/suppliers?${params.toString()}`);
@@ -86,7 +88,7 @@ export default function SuppliersPage() {
 
   useEffect(() => {
     loadSuppliers();
-  }, [search, page]);
+  }, [debouncedSearch, page]);
 
   function updateForm(field: keyof SupplierForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));

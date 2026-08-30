@@ -1,12 +1,8 @@
-
-
 export async function fetchApi(
   endpoint: string,
   options: RequestInit = {},
 ) {
-  const baseUrl = (
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
-  ).replace(/\/$/, "");
+  const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
 
   const url = baseUrl + (endpoint.startsWith("/api/v1") ? "" : "/api/v1") + endpoint;
 

@@ -1,72 +1,45 @@
-import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function CustomerCredit({ data = {} }: { data?: any }) {
+  const receivables = data?.receivables || {};
+
+  const formatCurrency = (val: any) => {
+    if (!val) return "₹0";
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(Number(val));
+  };
+
+  const formatCompact = (val: any) => {
+    if (!val) return "₹0";
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", notation: "compact", maximumFractionDigits: 1 }).format(Number(val));
+  };
+
   return (
     <div className="bg-card border rounded-xl overflow-hidden flex flex-col h-full">
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">MONEY OUT WITH CUSTOMERS</h2>
-        <Button variant="link" className="text-sm p-0 h-auto font-medium flex items-center gap-1">
-          View All <ArrowRight className="w-3 h-3" />
-        </Button>
+        <Link href="/receivables" className="text-sm p-0 h-auto font-medium flex items-center gap-1 text-primary hover:underline">View All <ArrowRight className="w-3 h-3" /></Link>
       </div>
       
-      <div className="p-5 flex flex-col grow">
+      <div className="p-5 flex flex-col grow justify-between">
         <div className="mb-4">
-          <div className="text-2xl font-bold tracking-tight tabular-nums">₹3,42,000</div>
+          <div className="text-2xl font-bold tracking-tight tabular-nums">{formatCurrency(receivables.total)}</div>
           <div className="text-sm text-muted-foreground">Total outstanding</div>
         </div>
         
-        <div className="flex items-center gap-4 text-sm font-medium mb-5">
+        <div className="flex items-center justify-between text-sm font-medium mt-auto border-t pt-5">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground font-normal">Overdue</span>
-            <span className="text-red-500 tabular-nums">₹84K</span>
+            <span className="text-xs text-muted-foreground font-normal mb-1">Overdue</span>
+            <span className="text-red-500 tabular-nums">{formatCompact(receivables.overdue)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground font-normal">Due soon</span>
-            <span className="text-amber-500 tabular-nums">₹42K</span>
+            <span className="text-xs text-muted-foreground font-normal mb-1">Due soon</span>
+            <span className="text-amber-500 tabular-nums">{formatCompact(receivables.dueSoon)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground font-normal">Current</span>
-            <span className="text-foreground tabular-nums">₹2.36L</span>
-          </div>
-        </div>
-        
-        <div className="border-t pt-4 mt-auto">
-          <div className="flex flex-col divide-y -my-2">
-            <div className="py-2.5 flex justify-between items-center group cursor-pointer hover:bg-muted/30 px-2 -mx-2 rounded-md transition">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
-                <span className="text-sm font-medium">Rajesh Traders</span>
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-semibold tabular-nums">₹72,000</div>
-                <div className="text-[11px] text-muted-foreground">17 days overdue</div>
-              </div>
-            </div>
-            
-            <div className="py-2.5 flex justify-between items-center group cursor-pointer hover:bg-muted/30 px-2 -mx-2 rounded-md transition">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span className="text-sm font-medium">Amit Retail</span>
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-semibold tabular-nums">₹43,000</div>
-                <div className="text-[11px] text-muted-foreground">9 days overdue</div>
-              </div>
-            </div>
-            
-            <div className="py-2.5 flex justify-between items-center group cursor-pointer hover:bg-muted/30 px-2 -mx-2 rounded-md transition">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-sm font-medium">Sharma Retail</span>
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-semibold tabular-nums">₹31,000</div>
-                <div className="text-[11px] text-muted-foreground">5 days overdue</div>
-              </div>
-            </div>
+            <span className="text-xs text-muted-foreground font-normal mb-1">Current</span>
+            <span className="text-foreground tabular-nums">{formatCompact(receivables.current)}</span>
           </div>
         </div>
       </div>

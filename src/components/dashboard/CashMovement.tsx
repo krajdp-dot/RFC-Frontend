@@ -1,6 +1,19 @@
 import { cn } from "@/lib/utils";
 
 export function CashMovement({ data = {} }: { data?: any }) {
+  const sales = data?.sales || {};
+  const purchases = data?.purchases || {};
+  const expenses = data?.expenses || {};
+
+  const moneyReceived = Number(sales.collections || 0);
+  const moneyPaid = Number(purchases.paid || 0) + Number(expenses.total || 0);
+  
+  const netChange = moneyReceived - moneyPaid;
+
+  const formatCurrency = (val: any) => {
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(Number(val));
+  };
+
   return (
     <div className="bg-card border rounded-xl overflow-hidden p-5 flex flex-col h-full">
       <div className="flex justify-between items-center mb-5">
@@ -9,35 +22,25 @@ export function CashMovement({ data = {} }: { data?: any }) {
       </div>
       
       <div className="space-y-4 text-sm grow flex flex-col justify-center">
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Opening Balance</span>
-          <span className="tabular-nums font-medium">₹2,85,000</span>
-        </div>
-        
         <div className="flex justify-between items-center text-emerald-600">
           <span className="flex items-center gap-2">
             <span className="w-4 inline-block text-center">+</span> Money Received
           </span>
-          <span className="font-semibold tabular-nums">+ ₹2,45,000</span>
+          <span className="font-semibold tabular-nums">+{formatCurrency(moneyReceived)}</span>
         </div>
         
         <div className="flex justify-between items-center text-red-500">
           <span className="flex items-center gap-2">
             <span className="w-4 inline-block text-center">−</span> Money Paid
           </span>
-          <span className="font-semibold tabular-nums">− ₹1,88,000</span>
-        </div>
-        
-        <div className="flex justify-between items-center text-blue-600 bg-blue-500/5 p-2 -mx-2 rounded-md border border-blue-500/10">
-          <span className="flex items-center gap-2">
-            <span className="w-4 inline-block text-center">↔</span> Transfers
-          </span>
-          <span className="font-semibold tabular-nums">↔ ₹25,000</span>
+          <span className="font-semibold tabular-nums">−{formatCurrency(moneyPaid)}</span>
         </div>
         
         <div className="border-t-4 border-double pt-3 mt-1 flex justify-between items-center text-base">
-          <span className="font-bold">Closing Balance</span>
-          <span className="font-bold tabular-nums">₹3,17,000</span>
+          <span className="font-bold">Net Change</span>
+          <span className={cn("font-bold tabular-nums", netChange >= 0 ? "text-emerald-600" : "text-red-500")}>
+            {netChange > 0 ? "+" : ""}{formatCurrency(netChange)}
+          </span>
         </div>
       </div>
     </div>

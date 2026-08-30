@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { BarChart3 } from "lucide-react";
 
 export function BusinessTrend({ data = {} }: { data?: any }) {
   const [activeTab, setActiveTab] = useState("Sales");
@@ -57,10 +58,10 @@ export function BusinessTrend({ data = {} }: { data?: any }) {
         </div>
       </div>
       
-      {/* Chart Placeholder */}
       <div className="grow bg-muted/10 rounded-lg border border-dashed border-border/60 flex items-center justify-center min-h-[192px]">
         <div className="text-center text-muted-foreground">
-          <p className="text-sm font-medium">Chart will render here</p>
+          <BarChart3 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <p className="text-sm font-medium">Not enough data to show trend</p>
           <p className="text-xs mt-1">Showing {activeTab} for the last {activePeriod}</p>
         </div>
       </div>
