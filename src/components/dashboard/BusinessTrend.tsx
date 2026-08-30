@@ -2,8 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
-export function BusinessTrend() {
+export function BusinessTrend({ data = {} }: { data?: any }) {
   const [activeTab, setActiveTab] = useState("Sales");
   const [activePeriod, setActivePeriod] = useState("7D");
   
@@ -19,18 +20,19 @@ export function BusinessTrend() {
           {/* Tabs */}
           <div className="flex items-center gap-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
             {tabs.map(tab => (
-              <button
+              <Button
                 key={tab}
+                variant="ghost"
                 onClick={() => setActiveTab(tab)}
                 className={cn(
-                  "text-sm font-medium pb-2 border-b-2 whitespace-nowrap transition-colors",
+                  "h-auto pb-2 px-1 rounded-none border-b-2 text-sm font-medium transition-colors hover:bg-transparent",
                   activeTab === tab
                     ? "border-primary text-foreground"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
                 {tab}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -38,18 +40,19 @@ export function BusinessTrend() {
         {/* Period Selector */}
         <div className="flex items-center gap-1 shrink-0 bg-muted/50 p-1 rounded-lg self-start md:self-auto md:mt-6">
           {periods.map(period => (
-            <button
+            <Button
               key={period}
+              variant="ghost"
               onClick={() => setActivePeriod(period)}
               className={cn(
-                "text-xs font-medium px-2.5 py-1 rounded-md transition-colors",
+                "h-auto px-2.5 py-1 text-xs font-medium rounded-md transition-colors hover:bg-transparent",
                 activePeriod === period
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-primary/10 text-primary hover:bg-primary/10"
                   : "text-muted-foreground hover:bg-muted"
               )}
             >
               {period}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

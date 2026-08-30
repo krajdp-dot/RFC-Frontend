@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { AlertCircle, AlertTriangle, Package, TrendingDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export function ActionCenter() {
+export function ActionCenter({ data = {} }: { data?: any }) {
   return (
     <div className="bg-card border rounded-xl overflow-hidden h-full flex flex-col">
       <div className="p-4 border-b flex items-center gap-2">
@@ -19,9 +19,9 @@ export function ActionCenter() {
             <p className="font-medium text-sm truncate">Rajesh Traders</p>
             <p className="text-xs text-muted-foreground truncate">₹72K overdue · 17 days</p>
           </div>
-          <button className="shrink-0 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button variant="secondary" size="sm" className="shrink-0 text-xs px-3 h-auto py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             Receive Payment
-          </button>
+          </Button>
         </div>
         
         <div className="p-4 flex items-center gap-3 group hover:bg-muted/30 transition-colors cursor-pointer">
@@ -32,9 +32,9 @@ export function ActionCenter() {
             <p className="font-medium text-sm truncate">Merchant A</p>
             <p className="text-xs text-muted-foreground truncate">₹50K payable due tomorrow</p>
           </div>
-          <button className="shrink-0 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button variant="secondary" size="sm" className="shrink-0 text-xs px-3 h-auto py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             Pay Supplier
-          </button>
+          </Button>
         </div>
         
         <div className="p-4 flex items-center gap-3 group hover:bg-muted/30 transition-colors cursor-pointer">
@@ -45,9 +45,9 @@ export function ActionCenter() {
             <p className="font-medium text-sm truncate">Banana Stock</p>
             <p className="text-xs text-muted-foreground truncate">18% below preferred level</p>
           </div>
-          <button className="shrink-0 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button variant="secondary" size="sm" className="shrink-0 text-xs px-3 h-auto py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             New Purchase
-          </button>
+          </Button>
         </div>
         
         <div className="p-4 flex items-center gap-3 group hover:bg-muted/30 transition-colors cursor-pointer">
@@ -58,9 +58,9 @@ export function ActionCenter() {
             <p className="font-medium text-sm truncate">Collections</p>
             <p className="text-xs text-muted-foreground truncate">₹84K behind target this week</p>
           </div>
-          <button className="shrink-0 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button variant="secondary" size="sm" className="shrink-0 text-xs px-3 h-auto py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             Review
-          </button>
+          </Button>
         </div>
       </div>
     </div>

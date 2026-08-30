@@ -1,27 +1,71 @@
-import { Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { Plus, Search, Filter } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
 import { StatusBadge } from "@/components/shared/StatusBadge";
-import { formatCurrency } from "@/lib/formatters";
 import { fetchApi } from "@/lib/fetchApi";
+import { Button } from "@/components/ui/button";
+import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 
-export default async function SalesPage() {
-  let salesResponse: any[] = [];
-  let error = null;
-  
-  try {
-    salesResponse = await fetchApi('/sales');
-  } catch (err: any) {
-    error = err.message;
+function formatCurrency(amount: string | number) {
+  if (amount === undefined || amount === null) return "—";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(Number(amount));
+}
+
+export default function SalesPage() {
+  const [sales, setSales] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
+
+  async function loadSales() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "20",
+      });
+
+      if (search.trim()) {
+        params.set("search", search.trim());
+      }
+
+      const response = await fetchApi(`/sales?${params.toString()}`);
+
+      if (response && response.data) {
+        setSales(response.data);
+        setMeta(response.meta || null);
+      } else if (Array.isArray(response)) {
+        setSales(response);
+        setMeta(null);
+      } else {
+        setSales([]);
+        setMeta(null);
+      }
+    } catch (err: any) {
+      console.error("Failed to load sales:", err);
+      setError(err.message || "Failed to load sales");
+      setSales([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const sales = salesResponse || [];
+  useEffect(() => {
+    loadSales();
+  }, [search, page]);
 
   const metrics = [
-    { label: "Today's Sales", value: "₹0", trend: { value: "+0%", positive: true } },
-    { label: "Collected", value: "₹0" },
-    { label: "Customer Credit", value: "₹0", trend: { value: "-0%", positive: true } },
-    { label: "Total Transactions", value: sales.length.toString() },
+    { label: "Total Sales", value: meta?.total?.toString() || sales.length.toString() },
   ];
 
   return (
@@ -34,12 +78,6 @@ export default async function SalesPage() {
       
       <MetricStrip metrics={metrics} />
       
-      {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200">
-          Failed to load sales from API: {error}
-        </div>
-      )}
-
       <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
           <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Recent Sales</h2>
@@ -49,68 +87,74 @@ export default async function SalesPage() {
               <input 
                 type="text" 
                 placeholder="Search sales..." 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 pr-4 py-1.5 text-sm border rounded-lg bg-background focus:outline-none focus:ring-1 focus:ring-primary w-64"
               />
             </div>
-            <button className="p-1.5 border rounded-lg hover:bg-muted text-muted-foreground">
+            <Button variant="outline" size="icon" className="h-8 w-8 text-muted-foreground" onClick={loadSales}>
               <Filter className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
         
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
-              <tr>
-                <th className="px-4 py-3 font-medium">Date</th>
-                <th className="px-4 py-3 font-medium">Sale ID</th>
-                <th className="px-4 py-3 font-medium">Customer</th>
-                <th className="px-4 py-3 font-medium text-right">Value</th>
-                <th className="px-4 py-3 font-medium text-right">Received</th>
-                <th className="px-4 py-3 font-medium text-right">Credit</th>
-                <th className="px-4 py-3 font-medium text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {sales.length === 0 && !error && (
+        {loading && (
+          <div className="p-8 text-center text-muted-foreground">Loading sales...</div>
+        )}
+
+        {!loading && error && (
+          <div className="p-8 text-center text-destructive">
+            <p>{error}</p>
+            <button type="button" onClick={loadSales} className="mt-3 underline">Try again</button>
+          </div>
+        )}
+
+        {!loading && !error && sales.length === 0 && (
+          <div className="p-8 text-center text-muted-foreground">
+            No sales found.
+          </div>
+        )}
+
+        {!loading && !error && sales.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No sales found.
-                  </td>
+                  <th className="px-4 py-3 font-medium">Date</th>
+                  <th className="px-4 py-3 font-medium">Sale ID</th>
+                  <th className="px-4 py-3 font-medium">Customer</th>
+                  <th className="px-4 py-3 font-medium text-right">Value</th>
+                  <th className="px-4 py-3 font-medium text-right">Received</th>
+                  <th className="px-4 py-3 font-medium text-right">Credit</th>
+                  <th className="px-4 py-3 font-medium text-center">Status</th>
                 </tr>
-              )}
-              {sales.map((sale: any) => (
-                <tr key={sale.id} className="hover:bg-muted/10 transition-colors group">
-                  <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
-                    {new Date(sale.businessDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap font-medium">{sale.saleReference}</td>
-                  <td className="px-4 py-3 font-medium">{sale.customer?.name || 'Unknown'}</td>
-                  <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(sale.totalAmount)}</td>
-                  <td className="px-4 py-3 tabular-nums text-right text-muted-foreground">{formatCurrency(sale.receivedAmount)}</td>
-                  <td className="px-4 py-3 tabular-nums text-right text-amber-600 font-medium">
-                    {sale.creditAmount > 0 ? formatCurrency(sale.creditAmount) : "-"}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <StatusBadge variant={sale.status.toLowerCase() as any} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        <div className="p-3 border-t flex items-center justify-between text-xs text-muted-foreground bg-muted/10">
-          <span>Showing {sales.length} sales</span>
-          <div className="flex items-center gap-1">
-            <button className="p-1 border rounded hover:bg-muted disabled:opacity-50" disabled>
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button className="p-1 border rounded hover:bg-muted" disabled>
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              </thead>
+              <tbody className="divide-y">
+                {sales.map((sale: any) => (
+                  <tr key={sale.id} className="hover:bg-muted/10 transition-colors group">
+                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
+                      {new Date(sale.businessDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap font-medium">{sale.saleReference}</td>
+                    <td className="px-4 py-3 font-medium">{sale.customer?.name || 'Unknown'}</td>
+                    <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(sale.totalAmount)}</td>
+                    <td className="px-4 py-3 tabular-nums text-right text-muted-foreground">{formatCurrency(sale.receivedAmount)}</td>
+                    <td className="px-4 py-3 tabular-nums text-right text-amber-600 font-medium">
+                      {Number(sale.creditAmount) > 0 ? formatCurrency(sale.creditAmount) : "—"}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <StatusBadge variant={sale.status?.toLowerCase() as any} label={sale.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
+        )}
+        
+        {meta && sales.length > 0 && !loading && !error && (
+          <Pagination meta={meta} onPageChange={setPage} />
+        )}
       </div>
     </div>
   );

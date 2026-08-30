@@ -1,6 +1,7 @@
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { Button } from "@/components/ui/button";
 
-export function StockAtRisk() {
+export function StockAtRisk({ data = {} }: { data?: any }) {
   const atRisk = [
     { name: "Guava", details: "45kg, 4d old", value: "₹2.8K", status: "URGENT", type: "error" },
     { name: "Orange", details: "85kg, 3d old", value: "₹3.5K", status: "MARKDOWN", type: "warning" },
@@ -31,7 +32,7 @@ export function StockAtRisk() {
         ))}
       </div>
       <div className="p-3 border-t bg-muted/10 text-center">
-        <button className="text-sm font-medium text-primary hover:underline">View All</button>
+        <Button variant="link" className="text-sm p-0 h-auto font-medium">View All</Button>
       </div>
     </div>
   );

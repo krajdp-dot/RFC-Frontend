@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
 
-export function PurchasingCapacity() {
+export function PurchasingCapacity({ data = {} }: { data?: any }) {
   return (
     <div className="bg-card border rounded-xl h-full flex flex-col p-5">
       <div className="flex items-center justify-between mb-4">

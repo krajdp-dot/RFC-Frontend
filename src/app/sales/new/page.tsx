@@ -1,104 +1,222 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { fetchApi } from "@/lib/fetchApi";
+
+type Customer = {
+  id: string;
+  name: string;
+};
+
+type Product = {
+  id: string;
+  name: string;
+};
+
+type Account = {
+  id: string;
+  name: string;
+  type: string;
+};
+
+type SaleItem = {
+  productId: string;
+  quantity: number;
+  rate: number;
+  unit: string;
+};
+
+type Payment = {
+  accountId: string;
+  amount: number;
+  method: string;
+};
 
 export default function NewSalePage() {
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
-  const [customers, setCustomers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [accounts, setAccounts] = useState([]);
+  const [loadingOptions, setLoadingOptions] = useState(true);
+
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     customerId: "",
     businessDate: new Date().toISOString().split("T")[0],
-    items: [{ productId: "", quantity: 1, rate: 0, unit: "BOX" }],
+    items: [
+      {
+        productId: "",
+        quantity: 1,
+        rate: 0,
+        unit: "BOX",
+      },
+    ] as SaleItem[],
     discount: 0,
-    payments: [{ accountId: "", amount: 0, method: "CASH" }],
-    notes: ""
+    payments: [
+      {
+        accountId: "",
+        amount: 0,
+        method: "CASH",
+      },
+    ] as Payment[],
+    notes: "",
   });
 
   useEffect(() => {
-    // Fetch options
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    
-    Promise.all([
-      fetch(`${baseUrl}/api/v1/customers`).then(r => r.json()),
-      fetch(`${baseUrl}/api/v1/products`).then(r => r.json()),
-      fetch(`${baseUrl}/api/v1/accounts`).then(r => r.json())
-    ]).then(([c, p, a]) => {
-      setCustomers(c.data || c || []);
-      setProducts(p.data || p || []);
-      setAccounts(a.data || a || []);
-    }).catch(err => {
-      console.error("Failed to load dependencies", err);
-    });
+    async function loadOptions() {
+      setLoadingOptions(true);
+      setError("");
+
+      try {
+        const [customersResponse, productsResponse, accountsResponse] =
+          await Promise.all([
+            fetchApi("/customers"),
+            fetchApi("/products"),
+            fetchApi("/accounts"),
+          ]);
+
+        const getArray = (response: any) => {
+          if (Array.isArray(response)) return response;
+          if (Array.isArray(response?.data)) return response.data;
+          if (Array.isArray(response?.items)) return response.items;
+          return [];
+        };
+
+        setCustomers(getArray(customersResponse));
+        setProducts(getArray(productsResponse));
+        setAccounts(getArray(accountsResponse));
+      } catch (err) {
+        console.error("Failed to load sale dependencies:", err);
+
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to load sale dependencies",
+        );
+      } finally {
+        setLoadingOptions(false);
+      }
+    }
+
+    loadOptions();
   }, []);
 
-  const handleItemChange = (index: number, field: string, value: any) => {
-    const newItems = [...formData.items];
-    newItems[index] = { ...newItems[index], [field]: value };
-    setFormData({ ...formData, items: newItems });
-  };
+  function handleItemChange(
+    index: number,
+    field: keyof SaleItem,
+    value: string | number,
+  ) {
+    setFormData((current) => {
+      const items = [...current.items];
 
-  const addItem = () => {
-    setFormData({
-      ...formData,
-      items: [...formData.items, { productId: "", quantity: 1, rate: 0, unit: "BOX" }]
-    });
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = formData.items.filter((_, i) => i !== index);
-    setFormData({ ...formData, items: newItems });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    
-    try {
-      // Filter out payments with no account selected or 0 amount if needed,
-      // but if account is selected and amount is 0, backend might reject.
-      const payload = {
-        ...formData,
-        payments: formData.payments.filter(p => p.accountId && p.amount > 0)
+      items[index] = {
+        ...items[index],
+        [field]: value,
       };
 
-      const res = await fetch(`${baseUrl}/api/v1/sales`, {
+      return {
+        ...current,
+        items,
+      };
+    });
+  }
+
+  function addItem() {
+    setFormData((current) => ({
+      ...current,
+      items: [
+        ...current.items,
+        {
+          productId: "",
+          quantity: 1,
+          rate: 0,
+          unit: "BOX",
+        },
+      ],
+    }));
+  }
+
+  function removeItem(index: number) {
+    setFormData((current) => ({
+      ...current,
+      items: current.items.filter((_, i) => i !== index),
+    }));
+  }
+
+  function handlePaymentChange(
+    field: keyof Payment,
+    value: string | number,
+  ) {
+    setFormData((current) => {
+      const payments = [...current.payments];
+
+      payments[0] = {
+        ...payments[0],
+        [field]: value,
+      };
+
+      return {
+        ...current,
+        payments,
+      };
+    });
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const payload = {
+        customerId: formData.customerId,
+        businessDate: formData.businessDate,
+        items: formData.items,
+        discount: formData.discount,
+        payments: formData.payments.filter(
+          (payment) => payment.accountId && payment.amount > 0,
+        ),
+        notes: formData.notes,
+      };
+
+      await fetchApi("/sales", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
-      
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || res.statusText);
-      }
-      
+
       router.push("/sales");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      console.error("Failed to create sale:", err);
+
+      setError(
+        err instanceof Error ? err.message : "Failed to create sale",
+      );
+
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="flex flex-col gap-6 p-6 w-full max-w-3xl mx-auto">
-      <PageHeader 
-        title="New Sale" 
-        subtitle="Record an outgoing sale to a customer." 
-        primaryAction={{ label: "Cancel", icon: ArrowLeft, href: "/sales" }}
+      <PageHeader
+        title="New Sale"
+        subtitle="Record an outgoing sale to a customer."
+        primaryAction={{
+          label: "Cancel",
+          icon: ArrowLeft,
+          href: "/sales",
+        }}
       />
 
       {error && (
@@ -110,28 +228,50 @@ export default function NewSalePage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="bg-card border rounded-xl p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-lg">General Info</h2>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Customer</label>
-              <select 
+
+              <select
                 required
+                disabled={loadingOptions}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={formData.customerId}
-                onChange={e => setFormData({ ...formData, customerId: e.target.value })}
+                onChange={(e) =>
+                  setFormData((current) => ({
+                    ...current,
+                    customerId: e.target.value,
+                  }))
+                }
               >
-                <option value="">Select Customer</option>
-                {customers.map((c: any) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                <option value="">
+                  {loadingOptions
+                    ? "Loading customers..."
+                    : "Select Customer"}
+                </option>
+
+                {customers.map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.name}
+                  </option>
                 ))}
               </select>
             </div>
+
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Date</label>
-              <Input 
-                type="date" 
+
+              <Input
+                type="date"
                 required
                 value={formData.businessDate}
-                onChange={e => setFormData({ ...formData, businessDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData((current) => ({
+                    ...current,
+                    businessDate: e.target.value,
+                  }))
+                }
               />
             </div>
           </div>
@@ -140,60 +280,109 @@ export default function NewSalePage() {
         <div className="bg-card border rounded-xl p-5 flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <h2 className="font-semibold text-lg">Items</h2>
-            <Button type="button" variant="outline" size="sm" onClick={addItem}>
-              <Plus className="w-4 h-4 mr-1" /> Add Item
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addItem}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Item
             </Button>
           </div>
-          
-          {formData.items.map((item, i) => (
-            <div key={i} className="flex items-center gap-3 bg-muted/30 p-3 rounded-lg border">
-              <select 
+
+          {formData.items.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-3 bg-muted/30 p-3 rounded-lg border"
+            >
+              <select
                 required
+                disabled={loadingOptions}
                 className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={item.productId}
-                onChange={e => handleItemChange(i, 'productId', e.target.value)}
+                onChange={(e) =>
+                  handleItemChange(index, "productId", e.target.value)
+                }
               >
-                <option value="">Select Product</option>
-                {products.map((p: any) => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
+                <option value="">
+                  {loadingOptions
+                    ? "Loading products..."
+                    : "Select Product"}
+                </option>
+
+                {products.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                  </option>
                 ))}
               </select>
-              <Input 
-                type="number" 
-                min="1" 
-                placeholder="Qty (Boxes)" 
+
+              <Input
+                type="number"
+                min="1"
+                placeholder="Qty"
                 className="w-24"
                 required
                 value={item.quantity}
-                onChange={e => handleItemChange(i, 'quantity', Number(e.target.value))}
+                onChange={(e) =>
+                  handleItemChange(
+                    index,
+                    "quantity",
+                    Number(e.target.value),
+                  )
+                }
               />
-              <Input 
-                type="number" 
-                min="0" 
+
+              <Input
+                type="number"
+                min="0"
                 step="0.01"
-                placeholder="Rate" 
-                className="w-24"
+                placeholder="Rate"
+                className="w-28"
                 required
                 value={item.rate}
-                onChange={e => handleItemChange(i, 'rate', Number(e.target.value))}
+                onChange={(e) =>
+                  handleItemChange(
+                    index,
+                    "rate",
+                    Number(e.target.value),
+                  )
+                }
               />
-              <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(i)} disabled={formData.items.length === 1}>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeItem(index)}
+                disabled={formData.items.length === 1}
+              >
                 <Trash2 className="w-4 h-4 text-red-500" />
               </Button>
             </div>
           ))}
-          
+
           <div className="flex items-center gap-4 mt-2 border-t pt-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-muted-foreground">Discount Applied</label>
-              <Input 
-                type="number" 
-                min="0" 
+              <label className="text-sm font-medium text-muted-foreground">
+                Discount Applied
+              </label>
+
+              <Input
+                type="number"
+                min="0"
                 step="0.01"
-                placeholder="Discount" 
+                placeholder="Discount"
                 className="w-32"
                 value={formData.discount}
-                onChange={e => setFormData({ ...formData, discount: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData((current) => ({
+                    ...current,
+                    discount: Number(e.target.value),
+                  }))
+                }
               />
             </div>
           </div>
@@ -201,38 +390,49 @@ export default function NewSalePage() {
 
         <div className="bg-card border rounded-xl p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-lg">Payment Received</h2>
+
           <div className="flex items-center gap-4">
-            <select 
+            <select
               className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={formData.payments[0].accountId}
-              onChange={e => {
-                const newP = [...formData.payments];
-                newP[0].accountId = e.target.value;
-                setFormData({ ...formData, payments: newP });
-              }}
+              onChange={(e) =>
+                handlePaymentChange("accountId", e.target.value)
+              }
             >
-              <option value="">No Payment (Credit) / Select Account</option>
-              {accounts.map((a: any) => (
-                <option key={a.id} value={a.id}>{a.name} ({a.type})</option>
+              <option value="">
+                No Payment (Credit) / Select Account
+              </option>
+
+              {accounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name} ({account.type})
+                </option>
               ))}
             </select>
-            <Input 
-              type="number" 
-              min="0" 
+
+            <Input
+              type="number"
+              min="0"
               step="0.01"
-              placeholder="Amount Received" 
-              className="w-32"
+              placeholder="Amount Received"
+              className="w-36"
               value={formData.payments[0].amount}
-              onChange={e => {
-                const newP = [...formData.payments];
-                newP[0].amount = Number(e.target.value);
-                setFormData({ ...formData, payments: newP });
-              }}
+              onChange={(e) =>
+                handlePaymentChange(
+                  "amount",
+                  Number(e.target.value),
+                )
+              }
             />
           </div>
         </div>
 
-        <Button type="submit" size="lg" className="w-full font-semibold" disabled={loading}>
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full font-semibold"
+          disabled={loading || loadingOptions}
+        >
           {loading ? "Creating..." : "Create Sale"}
         </Button>
       </form>

@@ -1,6 +1,7 @@
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { Button } from "@/components/ui/button";
 
-export function BuyOpportunities() {
+export function BuyOpportunities({ data = {} }: { data?: any }) {
   const opportunities = [
     { 
       name: "Apple", 
@@ -39,7 +40,7 @@ export function BuyOpportunities() {
         ))}
       </div>
       <div className="p-3 border-t bg-muted/10 text-center mt-auto">
-        <button className="text-sm font-medium text-primary hover:underline">View Board</button>
+        <Button variant="link" className="text-sm p-0 h-auto font-medium">View Board</Button>
       </div>
     </div>
   );

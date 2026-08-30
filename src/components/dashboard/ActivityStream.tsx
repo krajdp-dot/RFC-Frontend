@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import { ArrowDownLeft, ArrowUpRight, ShoppingCart, Truck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export function ActivityStream() {
+export function ActivityStream({ data = {} }: { data?: any }) {
   const activities = [
     { id: 1, type: 'sale', entity: 'Rajesh Traders', amount: '₹25,000', detail: '₹15K cash · ₹10K credit', time: '10:42 AM', color: 'text-emerald-600', bg: 'bg-emerald-100', icon: ArrowUpRight },
     { id: 2, type: 'receipt', entity: 'Sharma Retail', amount: '₹8,000', detail: 'UPI payment', time: '10:27 AM', color: 'text-blue-600', bg: 'bg-blue-100', icon: ArrowDownLeft },
@@ -15,7 +16,7 @@ export function ActivityStream() {
     <div className="bg-card border rounded-xl overflow-hidden h-full flex flex-col">
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">TODAY'S ACTIVITY</h2>
-        <button className="text-sm font-medium text-primary hover:underline">View All</button>
+        <Button variant="link" className="text-sm p-0 h-auto font-medium">View All</Button>
       </div>
       <div className="p-2 grow flex flex-col justify-center">
         {activities.map((activity, index) => {

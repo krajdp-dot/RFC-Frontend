@@ -63,17 +63,14 @@ export default function ProductProfilePage() {
       <div className="space-y-4">
         <div className="flex space-x-2 border-b pb-2 overflow-x-auto">
           {TABS.map(tab => (
-            <button
+            <Button
               key={tab}
+              variant={activeTab === tab ? "secondary" : "ghost"}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
-                activeTab === tab 
-                  ? 'bg-secondary text-foreground' 
-                  : 'text-muted-foreground hover:bg-muted'
-              }`}
+              className="px-4 py-2 h-auto text-sm font-medium rounded-lg whitespace-nowrap"
             >
               {tab}
-            </button>
+            </Button>
           ))}
         </div>
 

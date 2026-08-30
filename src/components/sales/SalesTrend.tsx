@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const data = [
@@ -25,34 +26,36 @@ export function SalesTrend() {
       <div className="p-4 border-b flex items-center justify-between bg-muted/20">
         <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
           {["Sales", "Collections", "Credit"].map((tab) => (
-            <button
+            <Button
               key={tab}
+              variant="ghost"
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                "px-3 py-1.5 h-auto text-xs font-medium rounded-md transition-colors hover:bg-transparent",
                 activeTab === tab
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-background text-foreground shadow-sm hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               {tab}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex items-center gap-1">
           {["7D", "30D", "90D", "YTD"].map((p) => (
-            <button
+            <Button
               key={p}
+              variant="ghost"
               onClick={() => setPeriod(p)}
               className={cn(
-                "px-2 py-1 text-xs font-medium rounded-md transition-colors",
+                "px-2 py-1 h-auto text-xs font-medium rounded-md transition-colors hover:bg-transparent",
                 period === p
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-primary/10 text-primary hover:bg-primary/10"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               {p}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

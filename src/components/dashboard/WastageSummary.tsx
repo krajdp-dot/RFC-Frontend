@@ -1,6 +1,6 @@
 import { TrendingDown } from "lucide-react";
 
-export function WastageSummary() {
+export function WastageSummary({ data = {} }: { data?: any }) {
   return (
     <div className="bg-card border rounded-xl overflow-hidden flex flex-col h-full">
       <div className="p-4 border-b">

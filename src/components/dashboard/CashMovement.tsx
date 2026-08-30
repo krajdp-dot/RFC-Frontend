@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export function CashMovement() {
+export function CashMovement({ data = {} }: { data?: any }) {
   return (
     <div className="bg-card border rounded-xl overflow-hidden p-5 flex flex-col h-full">
       <div className="flex justify-between items-center mb-5">

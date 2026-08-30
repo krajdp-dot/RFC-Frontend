@@ -1,14 +1,15 @@
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export function MoneyPosition() {
+export function MoneyPosition({ data = {} }: { data?: any }) {
   return (
     <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">MONEY POSITION</h2>
-        <button className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+        <Button variant="link" className="text-sm p-0 h-auto font-medium flex items-center gap-1">
           Full Report <ArrowRight className="w-3 h-3" />
-        </button>
+        </Button>
       </div>
       
       <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x">

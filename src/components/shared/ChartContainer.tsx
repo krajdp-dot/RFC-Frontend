@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ChartContainerProps {
   title: string;
@@ -47,7 +48,7 @@ export function ChartContainer({
         ) : error ? (
           <div className="text-center">
             <p className="text-sm font-medium text-foreground">{errorMessage}</p>
-            <button className="text-sm text-primary hover:underline mt-1">Try again</button>
+            <Button variant="link" className="mt-1 h-auto p-0 text-sm">Try again</Button>
           </div>
         ) : empty ? (
           <p className="text-sm text-muted-foreground">{emptyMessage}</p>

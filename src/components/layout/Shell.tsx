@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { cn } from "@/lib/utils";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
+
+  const isAuthRoute = pathname === '/login' || pathname === '/register';
+
+  if (isAuthRoute) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-background flex">

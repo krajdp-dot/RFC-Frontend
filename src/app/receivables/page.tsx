@@ -1,28 +1,67 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader"
 import { MetricStrip } from "@/components/shared/MetricStrip"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { Button } from "@/components/ui/button"
+import { fetchApi } from "@/lib/fetchApi";
+import Link from "next/link";
 
-const metrics = [
-  { label: "Total Receivables", value: "₹3.42L" },
-  { label: "Overdue", value: "₹84K", trend: "down" },
-  { label: "Due Soon", value: "₹42K" },
-  { label: "Current", value: "₹2.36L" },
-  { label: "Collected This Month", value: "₹4.8L", trend: "up" },
-]
-
-const receivables = [
-  { id: 1, name: "Krishna Retail", outstanding: "₹2,00,000", oldestInvoice: "INV-0789", days: "90+ days", recentPayment: "45 days ago", risk: "critical" },
-  { id: 2, name: "Patel Fruits", outstanding: "₹1,50,000", oldestInvoice: "INV-0912", days: "28 days", recentPayment: "5 days ago", risk: "watch" },
-  { id: 3, name: "Singh Wholesale", outstanding: "₹1,50,000", oldestInvoice: "INV-1002", days: "12 days", recentPayment: "Today", risk: "healthy" },
-  { id: 4, name: "Amit Retail", outstanding: "₹1,20,000", oldestInvoice: "INV-0855", days: "45 days", recentPayment: "18 days ago", risk: "watch" },
-  { id: 5, name: "Verma Market", outstanding: "₹80,000", oldestInvoice: "INV-0801", days: "65 days", recentPayment: "32 days ago", risk: "high" },
-  { id: 6, name: "Rajesh Traders", outstanding: "₹70,000", oldestInvoice: "INV-0988", days: "14 days", recentPayment: "2 days ago", risk: "healthy" },
-]
+function formatCurrency(amount: string | number) {
+  if (amount === undefined || amount === null) return "—";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(Number(amount));
+}
 
 export default function ReceivablesPage() {
+  const [summary, setSummary] = useState<any>(null);
+  const [aging, setAging] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function loadData() {
+    try {
+      setLoading(true);
+      setError("");
+      
+      const [summaryData, agingData] = await Promise.all([
+        fetchApi('/receivables'),
+        fetchApi('/receivables/aging')
+      ]);
+      
+      setSummary(summaryData);
+      setAging(Array.isArray(agingData) ? agingData : (agingData.data || []));
+    } catch (err: any) {
+      console.error("Failed to load receivables:", err);
+      setError(err.message || "Failed to load receivables");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const metrics = [
+    { label: "Total Receivables", value: formatCurrency(summary?.totalReceivables || 0) },
+    { label: "Overdue", value: formatCurrency(summary?.totalOverdue || 0) },
+    { label: "Due Soon (0-15d)", value: formatCurrency(summary?.due0To15 || 0) },
+    { label: "Current", value: formatCurrency(summary?.current || 0) },
+    { label: "Collected This Month", value: formatCurrency(summary?.collectedThisMonth || 0) },
+  ];
+
+  const total = Number(summary?.totalReceivables) || 1;
+  const bucket0to15Pct = ((Number(summary?.due0To15) || 0) / total) * 100;
+  const bucket16to30Pct = ((Number(summary?.due16To30) || 0) / total) * 100;
+  const bucket31to45Pct = ((Number(summary?.due31To45) || 0) / total) * 100;
+  const bucketOver45Pct = ((Number(summary?.dueOver45) || 0) / total) * 100;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <PageHeader
         title="Receivables"
         subtitle="Money customers owe you."
@@ -34,75 +73,91 @@ export default function ReceivablesPage() {
       {/* Ageing Breakdown */}
       <div className="bg-card border rounded-xl p-6">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Ageing Breakdown</h2>
-        <div className="flex h-8 rounded-md overflow-hidden mb-4">
-          <div className="bg-emerald-500 w-[35%]" title="0-7 days: ₹1.2L"></div>
-          <div className="bg-amber-500 w-[14%]" title="8-15 days: ₹48K"></div>
-          <div className="bg-orange-500 w-[12%]" title="16-30 days: ₹42K"></div>
-          <div className="bg-red-500 w-[39%]" title="31+ days: ₹84K"></div>
+        <div className="flex h-8 rounded-md overflow-hidden mb-4 bg-muted">
+          <div className="bg-emerald-500" style={{ width: `${bucket0to15Pct}%` }} title={`0-15 days: ${formatCurrency(summary?.due0To15)}`}></div>
+          <div className="bg-amber-500" style={{ width: `${bucket16to30Pct}%` }} title={`16-30 days: ${formatCurrency(summary?.due16To30)}`}></div>
+          <div className="bg-orange-500" style={{ width: `${bucket31to45Pct}%` }} title={`31-45 days: ${formatCurrency(summary?.due31To45)}`}></div>
+          <div className="bg-red-500" style={{ width: `${bucketOver45Pct}%` }} title={`45+ days: ${formatCurrency(summary?.dueOver45)}`}></div>
         </div>
         <div className="grid grid-cols-4 text-sm text-center">
           <div>
-            <p className="text-muted-foreground mb-1">0-7 days</p>
-            <p className="font-semibold tabular-nums">₹1.2L</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground mb-1">8-15 days</p>
-            <p className="font-semibold tabular-nums">₹48K</p>
+            <p className="text-muted-foreground mb-1">0-15 days</p>
+            <p className="font-semibold tabular-nums">{formatCurrency(summary?.due0To15 || 0)}</p>
           </div>
           <div>
             <p className="text-muted-foreground mb-1">16-30 days</p>
-            <p className="font-semibold tabular-nums">₹42K</p>
+            <p className="font-semibold tabular-nums">{formatCurrency(summary?.due16To30 || 0)}</p>
           </div>
           <div>
-            <p className="text-muted-foreground mb-1">31+ days</p>
-            <p className="font-semibold tabular-nums text-red-600">₹84K</p>
+            <p className="text-muted-foreground mb-1">31-45 days</p>
+            <p className="font-semibold tabular-nums">{formatCurrency(summary?.due31To45 || 0)}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-1">45+ days</p>
+            <p className="font-semibold tabular-nums text-red-600">{formatCurrency(summary?.dueOver45 || 0)}</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-card border rounded-xl overflow-hidden">
+      <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
         <div className="px-6 py-4 border-b flex justify-between items-center">
           <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Customer Receivables</h2>
+          <Button variant="outline" size="sm" onClick={loadData}>Refresh</Button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/50 text-muted-foreground">
-                <th className="px-6 py-3 text-left font-medium">Customer</th>
-                <th className="px-6 py-3 text-right font-medium">Outstanding</th>
-                <th className="px-6 py-3 text-left font-medium">Oldest Invoice</th>
-                <th className="px-6 py-3 text-left font-medium">Days Overdue</th>
-                <th className="px-6 py-3 text-left font-medium">Recent Payment</th>
-                <th className="px-6 py-3 text-left font-medium">Risk</th>
-                <th className="px-6 py-3 text-right font-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {receivables.map((r) => (
-                <tr key={r.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-6 py-4 font-medium">{r.name}</td>
-                  <td className="px-6 py-4 text-right tabular-nums text-amber-600 font-medium">{r.outstanding}</td>
-                  <td className="px-6 py-4 text-muted-foreground">{r.oldestInvoice}</td>
-                  <td className="px-6 py-4">{r.days}</td>
-                  <td className="px-6 py-4 text-muted-foreground">{r.recentPayment}</td>
-                  <td className="px-6 py-4">
-                    <StatusBadge
-                      label={r.risk.charAt(0).toUpperCase() + r.risk.slice(1)}
-                      variant={
-                        r.risk === "healthy" ? "success" :
-                        r.risk === "watch" ? "warning" :
-                        r.risk === "high" ? "error" : "error"
-                      }
-                    />
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Button variant="ghost" size="sm">Remind</Button>
-                  </td>
+        
+        {loading && (
+          <div className="p-8 text-center text-muted-foreground">Loading receivables...</div>
+        )}
+
+        {!loading && error && (
+          <div className="p-8 text-center text-destructive">
+            <p>{error}</p>
+            <button type="button" onClick={loadData} className="mt-3 underline">Try again</button>
+          </div>
+        )}
+
+        {!loading && !error && aging.length === 0 && (
+          <div className="p-8 text-center text-muted-foreground">
+            No customers with outstanding balances.
+          </div>
+        )}
+
+        {!loading && !error && aging.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50 text-muted-foreground text-left">
+                  <th className="px-6 py-3 font-medium">Customer</th>
+                  <th className="px-6 py-3 font-medium text-right">Outstanding</th>
+                  <th className="px-6 py-3 font-medium text-right">0-15d</th>
+                  <th className="px-6 py-3 font-medium text-right">16-30d</th>
+                  <th className="px-6 py-3 font-medium text-right">31-45d</th>
+                  <th className="px-6 py-3 font-medium text-right">45d+</th>
+                  <th className="px-6 py-3 font-medium text-right">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {aging.map((r) => (
+                  <tr key={r.customerId} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 font-medium">
+                      <Link href={`/customers/${r.customerId}`} className="hover:underline">
+                        {r.customerName}
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4 text-right tabular-nums font-bold text-amber-600">{formatCurrency(r.totalOutstanding)}</td>
+                    <td className="px-6 py-4 text-right tabular-nums">{formatCurrency(r.due0To15)}</td>
+                    <td className="px-6 py-4 text-right tabular-nums">{formatCurrency(r.due16To30)}</td>
+                    <td className="px-6 py-4 text-right tabular-nums text-orange-600">{formatCurrency(r.due31To45)}</td>
+                    <td className="px-6 py-4 text-right tabular-nums text-red-600 font-medium">{formatCurrency(r.dueOver45)}</td>
+                    <td className="px-6 py-4 text-right">
+                      <Button variant="ghost" size="sm">Receive</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )

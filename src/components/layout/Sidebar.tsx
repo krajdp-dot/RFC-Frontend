@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
@@ -149,12 +150,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Toggle & Profile */}
       <div className="mt-auto border-t border-sidebar-border shrink-0">
-        <button
+        <Button
+          variant="ghost"
           onClick={onToggle}
-          className="w-full flex items-center justify-center h-10 hover:bg-sidebar-accent text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors border-b border-sidebar-border"
+          className="w-full rounded-none h-10 hover:bg-sidebar-accent text-sidebar-foreground/50 hover:text-sidebar-foreground border-b border-sidebar-border"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
+        </Button>
         <div className="p-3">
           <div className={cn(
             "flex items-center gap-3 rounded-md",

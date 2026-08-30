@@ -1,34 +1,84 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Plus, Search, Filter } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
-import { formatCurrency } from "@/lib/formatters";
+import { fetchApi } from "@/lib/fetchApi";
+import { Button } from "@/components/ui/button";
+import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 
-const metrics = [
-  { label: "Today", value: "₹8,500" },
-  { label: "This Month", value: "₹1,20,000", trend: { value: "+5%", positive: false } },
-  { label: "Largest Category", value: "Transport", subtext: "₹42,000" },
-  { label: "Cash Expenses", value: "₹65,000" },
-];
-
-const expenses = [
-  { id: "EXP-802", date: "16 Aug 2026", category: "Transport", desc: "Freight for Apple box from HP", amount: 4500, method: "Bank Transfer", account: "HDFC Current" },
-  { id: "EXP-801", date: "16 Aug 2026", category: "Labour", desc: "Daily wage loading/unloading", amount: 1200, method: "Cash", account: "Petty Cash" },
-  { id: "EXP-800", date: "15 Aug 2026", category: "Fuel", desc: "Delivery tempo diesel", amount: 2500, method: "UPI", account: "SBI Current" },
-  { id: "EXP-799", date: "15 Aug 2026", category: "Other", desc: "Tea & Snacks", amount: 300, method: "Cash", account: "Petty Cash" },
-  { id: "EXP-798", date: "14 Aug 2026", category: "Rent", desc: "Godown rent part payment", amount: 12000, method: "Bank Transfer", account: "HDFC Current" },
-  { id: "EXP-797", date: "14 Aug 2026", category: "Transport", desc: "Local delivery charges", amount: 800, method: "Cash", account: "Petty Cash" },
-];
-
-const breakdown = [
-  { category: "Transport", amount: 42000, color: "bg-blue-500", pct: 35 },
-  { category: "Labour", amount: 28000, color: "bg-amber-500", pct: 23 },
-  { category: "Loading", amount: 15000, color: "bg-green-500", pct: 12.5 },
-  { category: "Rent", amount: 12000, color: "bg-purple-500", pct: 10 },
-  { category: "Fuel", amount: 8000, color: "bg-red-500", pct: 6.6 },
-  { category: "Other", amount: 15000, color: "bg-slate-500", pct: 12.5 },
-];
+function formatCurrency(amount: string | number) {
+  if (amount === undefined || amount === null) return "—";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(Number(amount));
+}
 
 export default function ExpensesPage() {
+  const [expenses, setExpenses] = useState<any[]>([]);
+  const [summary, setSummary] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
+
+  async function loadData() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "20",
+      });
+
+      if (search.trim()) {
+        params.set("search", search.trim());
+      }
+
+      const [expensesResponse, summaryResponse] = await Promise.all([
+        fetchApi(`/expenses?${params.toString()}`),
+        fetchApi(`/expenses/summary`),
+      ]);
+
+      if (expensesResponse && expensesResponse.data) {
+        setExpenses(expensesResponse.data);
+        setMeta(expensesResponse.meta || null);
+      } else if (Array.isArray(expensesResponse)) {
+        setExpenses(expensesResponse);
+        setMeta(null);
+      } else {
+        setExpenses([]);
+        setMeta(null);
+      }
+
+      setSummary(summaryResponse);
+    } catch (err: any) {
+      console.error("Failed to load expenses:", err);
+      setError(err.message || "Failed to load expenses");
+      setExpenses([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, [search, page]);
+
+  const metrics = [
+    { label: "Today", value: formatCurrency(summary?.todayTotal || 0) },
+    { label: "This Month", value: formatCurrency(summary?.monthTotal || 0) },
+    { label: "Largest Category", value: summary?.largestCategory?.name || "None", subtext: formatCurrency(summary?.largestCategory?.amount || 0) },
+    { label: "Cash Expenses", value: formatCurrency(summary?.cashExpenses || 0) },
+  ];
+
+  const breakdown = summary?.breakdown || [];
+  const colors = ["bg-blue-500", "bg-amber-500", "bg-green-500", "bg-purple-500", "bg-red-500", "bg-slate-500"];
+
   return (
     <div className="flex flex-col gap-6 p-6 w-full max-w-7xl mx-auto">
       <PageHeader 
@@ -39,34 +89,39 @@ export default function ExpensesPage() {
       
       <MetricStrip metrics={metrics} />
       
-      <div className="bg-card border rounded-xl p-5 flex flex-col">
-        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-6">Where did money go? (This Month)</h2>
-        
-        <div className="space-y-6">
-          <div className="h-6 w-full rounded-full overflow-hidden flex bg-muted">
-            {breakdown.map((item) => (
-              <div 
-                key={item.category} 
-                className={`h-full ${item.color} border-r border-background/20 last:border-0 hover:opacity-90 transition-opacity cursor-pointer`} 
-                style={{ width: `${item.pct}%` }}
-                title={`${item.category}: ${formatCurrency(item.amount)}`}
-              />
-            ))}
-          </div>
+      {breakdown.length > 0 && (
+        <div className="bg-card border rounded-xl p-5 flex flex-col">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-6">Where did money go? (This Month)</h2>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {breakdown.map((item) => (
-              <div key={item.category} className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                  <span className="text-sm font-medium">{item.category}</span>
+          <div className="space-y-6">
+            <div className="h-6 w-full rounded-full overflow-hidden flex bg-muted">
+              {breakdown.map((item: any, i: number) => {
+                const pct = (Number(item.amount) / Number(summary.monthTotal)) * 100;
+                return (
+                  <div 
+                    key={item.category} 
+                    className={`h-full ${colors[i % colors.length]} border-r border-background/20 last:border-0 hover:opacity-90 transition-opacity cursor-pointer`} 
+                    style={{ width: `${pct}%` }}
+                    title={`${item.category}: ${formatCurrency(item.amount)}`}
+                  />
+                );
+              })}
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {breakdown.map((item: any, i: number) => (
+                <div key={item.category} className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${colors[i % colors.length]}`} />
+                    <span className="text-sm font-medium">{item.category}</span>
+                  </div>
+                  <span className="text-lg font-bold tabular-nums ml-5">{formatCurrency(item.amount)}</span>
                 </div>
-                <span className="text-lg font-bold tabular-nums ml-5">{formatCurrency(item.amount)}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
       
       <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
@@ -77,43 +132,70 @@ export default function ExpensesPage() {
               <input 
                 type="text" 
                 placeholder="Search expenses..." 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 pr-4 py-1.5 text-sm border rounded-lg bg-background focus:outline-none focus:ring-1 focus:ring-primary w-64"
               />
             </div>
-            <button className="p-1.5 border rounded-lg hover:bg-muted text-muted-foreground">
+            <Button variant="outline" size="icon" className="h-8 w-8 text-muted-foreground" onClick={loadData}>
               <Filter className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
         
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
-              <tr>
-                <th className="px-4 py-3 font-medium">Date</th>
-                <th className="px-4 py-3 font-medium">Category</th>
-                <th className="px-4 py-3 font-medium">Description</th>
-                <th className="px-4 py-3 font-medium text-right">Amount</th>
-                <th className="px-4 py-3 font-medium text-center">Method</th>
-                <th className="px-4 py-3 font-medium">Account</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {expenses.map((expense) => (
-                <tr key={expense.id} className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{expense.date}</td>
-                  <td className="px-4 py-3 font-medium">
-                    <span className="px-2 py-1 rounded-md bg-muted text-xs">{expense.category}</span>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">{expense.desc}</td>
-                  <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(expense.amount)}</td>
-                  <td className="px-4 py-3 text-center text-muted-foreground">{expense.method}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{expense.account}</td>
+        {loading && (
+          <div className="p-8 text-center text-muted-foreground">Loading expenses...</div>
+        )}
+
+        {!loading && error && (
+          <div className="p-8 text-center text-destructive">
+            <p>{error}</p>
+            <button type="button" onClick={loadData} className="mt-3 underline">Try again</button>
+          </div>
+        )}
+
+        {!loading && !error && expenses.length === 0 && (
+          <div className="p-8 text-center text-muted-foreground">
+            No expenses found.
+          </div>
+        )}
+
+        {!loading && !error && expenses.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Date</th>
+                  <th className="px-4 py-3 font-medium">Category</th>
+                  <th className="px-4 py-3 font-medium">Description</th>
+                  <th className="px-4 py-3 font-medium text-right">Amount</th>
+                  <th className="px-4 py-3 font-medium text-center">Method</th>
+                  <th className="px-4 py-3 font-medium">Account</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y">
+                {expenses.map((expense) => (
+                  <tr key={expense.id} className="hover:bg-muted/10 transition-colors">
+                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
+                      {new Date(expense.businessDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3 font-medium">
+                      <span className="px-2 py-1 rounded-md bg-muted text-xs">{expense.category?.name || 'Uncategorized'}</span>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{expense.description}</td>
+                    <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(expense.amount)}</td>
+                    <td className="px-4 py-3 text-center text-muted-foreground">{expense.paymentMethod}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{expense.account?.name || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {meta && expenses.length > 0 && !loading && !error && (
+          <Pagination meta={meta} onPageChange={setPage} />
+        )}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export function Header() {
 
       <div className="flex items-center gap-4">
         {/* Command Search */}
-        <button className="flex items-center justify-between w-[260px] h-8 px-3 rounded-md border border-input bg-muted/30 hover:bg-muted/50 transition-colors text-muted-foreground text-[13px]">
+        <Button variant="outline" className="flex justify-between w-[260px] h-8 px-3 bg-muted/30 hover:bg-muted/50 text-muted-foreground text-[13px] font-normal border-dashed">
           <div className="flex items-center gap-2">
             <Search className="h-3.5 w-3.5" />
             <span>Search or jump to...</span>
@@ -21,7 +21,7 @@ export function Header() {
           <kbd className="inline-flex items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
             <span className="text-xs">⌘</span>K
           </kbd>
-        </button>
+        </Button>
 
         <div className="h-4 w-px bg-border" />
 
@@ -32,10 +32,10 @@ export function Header() {
         </div>
 
         {/* Notifications */}
-        <button className="relative flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted transition-colors text-muted-foreground">
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 text-muted-foreground">
           <Bell className="h-[18px] w-[18px]" />
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-destructive ring-2 ring-background" />
-        </button>
+        </Button>
 
         {/* New Transaction Dropdown Placeholder */}
         <div className="relative">

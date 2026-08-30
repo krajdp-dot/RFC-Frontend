@@ -1,31 +1,78 @@
-export async function fetchApi(endpoint: string, options: RequestInit = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  const url = `${baseUrl}/api/v1${endpoint}`;
-  
-  const defaultHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
 
-  // Mock a user/business ID for now since auth isn't fully wired on the frontend
-  // The backend uses a JwtAuthGuard which requires a token, but for now we might need a workaround 
-  // or we can pass a dummy token if we create an auth bypass.
-  // Actually, if we haven't bypassed auth in backend, we should use a valid token.
-  // We'll figure out auth later.
+
+export async function fetchApi(
+  endpoint: string,
+  options: RequestInit = {},
+) {
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+  ).replace(/\/$/, "");
+
+  const url = baseUrl + (endpoint.startsWith("/api/v1") ? "" : "/api/v1") + endpoint;
+
+  const headers = new Headers(options.headers);
+
+  if (!headers.has("Content-Type") && options.body && typeof options.body === 'string') {
+    headers.set("Content-Type", "application/json");
+  }
+
+  headers.set("Accept", "application/json");
+
+  // Get token from cookie (handles both RSC and CSR, though for CSR we can also use document.cookie, but Next.js fetch in CSR might not need this if we set credentials? No, we must send Bearer)
+  let token: string | undefined = undefined;
+  
+  if (typeof window !== "undefined") {
+    // Client-side
+    const match = document.cookie.match(new RegExp('(^| )' + 'token' + '=([^;]+)'));
+    if (match) token = match[2];
+  }
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
 
   const res = await fetch(url, {
     ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
-    cache: 'no-store' // Always fresh data for dashboard
+    headers,
+    cache: "no-store",
   });
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error(`API Error on ${endpoint}:`, res.status, errorText);
-    throw new Error(`API Error: ${res.status} ${res.statusText}`);
+  // Handle 401 globally
+  if (res.status === 401 && typeof window !== 'undefined') {
+    // Clear token
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    window.location.href = '/login';
+    throw new Error('Unauthorized');
   }
 
-  return res.json();
+  const contentType = res.headers.get("content-type") || "";
+
+  let data;
+  if (contentType.includes("application/json")) {
+    data = await res.json();
+  } else {
+    const text = await res.text();
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+  }
+
+  if (!res.ok) {
+    let message = `API Error: ${res.status}`;
+    
+    if (typeof data === "object" && data !== null) {
+      if (data.message) {
+        message = Array.isArray(data.message) ? data.message.join(", ") : data.message;
+      } else if (data.error) {
+        message = data.error;
+      }
+    }
+
+    console.error(`API Error [${endpoint}]:`, message);
+    throw new Error(message);
+  }
+
+  return data;
 }
