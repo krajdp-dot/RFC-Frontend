@@ -16,6 +16,7 @@ type Customer = {
 type Product = {
   id: string;
   name: string;
+  remainingBoxes?: number;
 };
 
 type Account = {
@@ -42,6 +43,7 @@ export default function NewSalePage() {
 
   const [loading, setLoading] = useState(false);
   const [loadingOptions, setLoadingOptions] = useState(true);
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -80,7 +82,7 @@ export default function NewSalePage() {
         const [customersResponse, productsResponse, accountsResponse] =
           await Promise.all([
             fetchApi("/customers"),
-            fetchApi("/products"),
+            fetchApi("/inventory"),
             fetchApi("/accounts"),
           ]);
 
@@ -92,7 +94,7 @@ export default function NewSalePage() {
         };
 
         setCustomers(getArray(customersResponse));
-        setProducts(getArray(productsResponse));
+        setProducts(getArray(productsResponse).filter((p: any) => p.remainingBoxes > 0));
         setAccounts(getArray(accountsResponse));
       } catch (err) {
         console.error("Failed to load sale dependencies:", err);
@@ -173,6 +175,7 @@ export default function NewSalePage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (loading) return;
 
     setLoading(true);
     setError("");
@@ -193,6 +196,7 @@ export default function NewSalePage() {
           amount: String(p.amount)
         })),
         notes: formData.notes,
+        idempotencyKey,
       };
 
       if (!payload.payments || payload.payments.length === 0) {
@@ -324,26 +328,33 @@ export default function NewSalePage() {
 
                 {products.map((product) => (
                   <option key={product.id} value={product.id}>
-                    {product.name}
+                    {product.name} ({product.remainingBoxes} boxes avail.)
                   </option>
                 ))}
               </select>
 
-              <Input
-                type="number"
-                min="1"
-                placeholder="Qty"
-                className="w-24"
-                required
-                value={item.quantity}
-                onChange={(e) =>
-                  handleItemChange(
-                    index,
-                    "quantity",
-                    Number(e.target.value),
-                  )
-                }
-              />
+              {(() => {
+                const selectedProd = products.find(p => p.id === item.productId);
+                const maxQty = selectedProd?.remainingBoxes || undefined;
+                return (
+                  <Input
+                    type="number"
+                    min="1"
+                    max={maxQty}
+                    placeholder="Qty"
+                    className="w-24"
+                    required
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleItemChange(
+                        index,
+                        "quantity",
+                        Number(e.target.value),
+                      )
+                    }
+                  />
+                );
+              })()}
 
               <Input
                 type="number"

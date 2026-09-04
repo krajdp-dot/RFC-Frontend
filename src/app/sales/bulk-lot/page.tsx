@@ -136,6 +136,8 @@ export default function BulkLotSalePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting) return;
+
     if (!lotId) {
       setError("Select a lot");
       return;

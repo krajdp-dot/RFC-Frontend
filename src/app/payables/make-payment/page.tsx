@@ -32,6 +32,7 @@ export default function MakePaymentPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   const [form, setForm] = useState({
     supplierId: "",
@@ -102,6 +103,7 @@ export default function MakePaymentPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting) return;
     if (!form.supplierId || !form.amount || !form.accountId) {
       setError("Supplier, amount, and account are required");
       return;
@@ -120,6 +122,7 @@ export default function MakePaymentPage() {
           businessDate: form.businessDate,
           purchaseId: form.purchaseId || undefined,
           notes: form.notes || undefined,
+          idempotencyKey,
         }),
       });
       setSuccess("Payment recorded successfully!");

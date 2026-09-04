@@ -40,6 +40,7 @@ export default function NewPurchasePage() {
 
   const [loading, setLoading] = useState(false);
   const [loadingOptions, setLoadingOptions] = useState(true);
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   const [suppliers, setSuppliers] = useState<Option[]>([]);
   const [products, setProducts] = useState<Option[]>([]);
@@ -151,6 +152,7 @@ export default function NewPurchasePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
 
     setLoading(true);
     setError("");
@@ -169,7 +171,8 @@ export default function NewPurchasePage() {
         payments: formData.payments.filter(p => p.amount > 0 && p.accountId).map(p => ({
           ...p,
           amount: String(p.amount)
-        }))
+        })),
+        idempotencyKey
       };
 
       if (!payload.payments || payload.payments.length === 0) {

@@ -23,6 +23,7 @@ export default function WastagePage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
   const [success, setSuccess] = useState("");
 
   const [form, setForm] = useState({
@@ -68,6 +69,8 @@ export default function WastagePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting) return;
+    
     if (!form.lotId || !form.reason) {
       setError("Lot and reason are required");
       return;
@@ -89,6 +92,7 @@ export default function WastagePage() {
             : undefined,
           weightKg: form.weightKg || undefined,
           reason: form.reason,
+          idempotencyKey,
         }),
       });
       setSuccess("Wastage recorded successfully!");
