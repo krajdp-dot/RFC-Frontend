@@ -59,20 +59,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       });
     } else {
+      // F1 FIX: Auth is intentionally OFF. Provide dev context instead of
+      // blocking the entire app. The backend JwtAuthGuard handles injecting
+      // business context when JWT_SECRET === 'dev-secret'.
+      setUser({ id: 'dev-user', name: 'Developer', email: 'dev@rfcerp.local' });
+      setBusiness({ id: 'dev-business', name: 'Rajdeep Fruits Company', legalName: 'Rajdeep Fruits Company', currency: 'INR' });
+      setToken('dev-mode');
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      const isPublicRoute = pathname === '/login' || pathname === '/register';
-      if (!token && !isPublicRoute) {
-        router.replace('/login');
-      } else if (token && isPublicRoute) {
-        router.replace('/');
-      }
-    }
-  }, [loading, token, pathname, router]);
+  // F1 FIX: Removed the redirect to /login that blocked the entire app
+  // when auth is off. Navigation protection is only needed in production
+  // with real auth enabled.
 
   const login = (newToken: string, newUser: User, newBusiness: Business) => {
     // Set cookie that expires in 7 days
@@ -103,12 +102,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         </div>
       </div>
     );
-  }
-
-  // Prevent flashing protected content
-  const isPublicRoute = pathname === '/login' || pathname === '/register';
-  if (!token && !isPublicRoute) {
-    return null; 
   }
 
   return (

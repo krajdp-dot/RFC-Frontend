@@ -139,8 +139,8 @@ export default function PurchasesPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap font-medium">{purchase.purchaseReference}</td>
                     <td className="px-4 py-3 font-medium">{purchase.supplier?.name || 'Unknown'}</td>
-                    <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(purchase.totalAmount)}</td>
-                    <td className="px-4 py-3 tabular-nums text-right text-muted-foreground">{formatCurrency(purchase.paidAmount)}</td>
+                    <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(purchase.landedCost)}</td>
+                    <td className="px-4 py-3 tabular-nums text-right text-muted-foreground">{formatCurrency(purchase.paid)}</td>
                     <td className="px-4 py-3 tabular-nums text-right text-amber-600 font-medium">
                       {Number(purchase.creditAmount) > 0 ? formatCurrency(purchase.creditAmount) : "—"}
                     </td>

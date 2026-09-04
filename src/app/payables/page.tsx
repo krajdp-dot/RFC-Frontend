@@ -66,7 +66,7 @@ export default function PayablesPage() {
       <PageHeader
         title="Payables"
         subtitle="Money you owe to suppliers."
-        primaryAction={{ label: "Make Payment" }}
+        primaryAction={{ label: "Make Payment", href: "/payables/make-payment" }}
       />
 
       <MetricStrip metrics={metrics} />
@@ -151,7 +151,9 @@ export default function PayablesPage() {
                     <td className="px-6 py-4 text-right tabular-nums text-orange-600">{formatCurrency(r.due31To45)}</td>
                     <td className="px-6 py-4 text-right tabular-nums text-red-600 font-medium">{formatCurrency(r.dueOver45)}</td>
                     <td className="px-6 py-4 text-right">
-                      <Button variant="outline" size="sm">Pay Now</Button>
+                      <Link href={`/payables/make-payment?supplierId=${r.supplierId}`}>
+                        <Button variant="outline" size="sm">Pay Now</Button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

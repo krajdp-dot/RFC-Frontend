@@ -139,8 +139,8 @@ export default function SalesPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap font-medium">{sale.saleReference}</td>
                     <td className="px-4 py-3 font-medium">{sale.customer?.name || 'Unknown'}</td>
-                    <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(sale.totalAmount)}</td>
-                    <td className="px-4 py-3 tabular-nums text-right text-muted-foreground">{formatCurrency(sale.receivedAmount)}</td>
+                    <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(sale.total)}</td>
+                    <td className="px-4 py-3 tabular-nums text-right text-muted-foreground">{formatCurrency(sale.received)}</td>
                     <td className="px-4 py-3 tabular-nums text-right text-amber-600 font-medium">
                       {Number(sale.creditAmount) > 0 ? formatCurrency(sale.creditAmount) : "—"}
                     </td>

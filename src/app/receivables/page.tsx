@@ -151,7 +151,9 @@ export default function ReceivablesPage() {
                     <td className="px-6 py-4 text-right tabular-nums text-orange-600">{formatCurrency(r.due31To45)}</td>
                     <td className="px-6 py-4 text-right tabular-nums text-red-600 font-medium">{formatCurrency(r.dueOver45)}</td>
                     <td className="px-6 py-4 text-right">
-                      <Button variant="ghost" size="sm">Receive</Button>
+                      <Link href={`/receivables/receive-payment?customerId=${r.customerId}`}>
+                        <Button variant="ghost" size="sm">Receive</Button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
