@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { Shell } from "@/components/layout/Shell";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { OfflineProvider } from "@/contexts/OfflineContext";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Rajdeep Fruits OS",
+  description: "Wholesale Business Operating System",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased">
+        <AuthProvider>
+          <OfflineProvider>
+            <Shell>{children}</Shell>
+          </OfflineProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
