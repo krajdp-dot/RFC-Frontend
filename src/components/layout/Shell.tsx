@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
@@ -11,8 +11,13 @@ import { permissionForRoute } from "@/lib/permissions";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { can, loading, role } = useAuth();
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const isAuthRoute = pathname === '/login' || pathname === '/register';
 
@@ -30,6 +35,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={cn("min-h-screen flex", pathname === "/" ? "bg-white" : "bg-background")}>
+      {mobileOpen && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          <button
+            type="button"
+            aria-label="Close navigation overlay"
+            className="absolute inset-0 bg-black/25"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute inset-y-0 left-0 z-10 w-[256px]">
+            <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
+          </div>
+        </div>
+      )}
+
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
@@ -42,8 +61,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
           collapsed ? "md:pl-[72px]" : "md:pl-[256px]"
         )}
       >
-        <Header />
-        <main className=cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8", pathname === "/" && "bg-white")>
+        <Header mobileMenuOpen={mobileOpen} onMobileMenuToggle={() => setMobileOpen((open) => !open)} />
+        <main className={cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8", pathname === "/" && "bg-white")}>
           {blocked ? <NoAccess role={role} /> : children}
         </main>
       </div>
