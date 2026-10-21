@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  ArrowLeft,
   Banknote,
   CalendarDays,
   Check,
@@ -482,7 +483,7 @@ export default function NewSalePage() {
         subtitle="A faster way to move fruit, boxes and money."
         primaryAction={{
           label: "Cancel",
-          icon: undefined,
+          icon: ArrowLeft,
           href: "/sales",
         }}
       />
