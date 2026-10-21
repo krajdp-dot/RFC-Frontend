@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -106,7 +107,7 @@ export default function WastagePage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-6 p-6 w-full max-w-3xl mx-auto">
+      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6 px-1 pb-12">
         <div className="p-8 text-center text-muted-foreground">Loading...</div>
       </div>
     );
@@ -140,29 +141,29 @@ export default function WastagePage() {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-card border rounded-xl p-6 flex flex-col gap-5"
+        className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm sm:p-7 flex flex-col gap-6"
       >
         {/* Product */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-muted-foreground">
             Product *
           </label>
-          <select
+          <QuickPick
             value={form.productId}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, productId: e.target.value, lotId: "" }))
-            }
-            className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            <option value="">Select product...</option>
-            {products
-              .filter((p: any) => p.remainingBoxes > 0)
-              .map((p: any) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} — {p.remainingBoxes} boxes in stock
-                </option>
-              ))}
-          </select>
+            onChange={(productId) => setForm((f) => ({ ...f, productId, lotId: "" }))}
+            options={products
+              .filter((product: any) => product.remainingBoxes > 0)
+              .map((product: any) => ({
+                value: product.id,
+                label: product.name,
+                detail: `${product.remainingBoxes} boxes in stock`,
+              }))}
+            mode="grid"
+            columns={2}
+            maxVisible={6}
+            placeholder="Search fruit / product…"
+            emptyText="No stock available for wastage entry."
+          />
         </div>
 
         {/* Lot */}
@@ -171,21 +172,20 @@ export default function WastagePage() {
             <label className="text-sm font-medium text-muted-foreground">
               Lot *
             </label>
-            <select
+            <QuickPick
               value={form.lotId}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, lotId: e.target.value }))
-              }
-              className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Select lot...</option>
-              {lots.map((l: any) => (
-                <option key={l.id} value={l.id}>
-                  {l.lotReference} — {l.remainingBoxes} boxes,{" "}
-                  {formatCurrency(l.costPerBox)}/box
-                </option>
-              ))}
-            </select>
+              onChange={(lotId) => setForm((f) => ({ ...f, lotId }))}
+              options={lots.map((lot: any) => ({
+                value: lot.id,
+                label: lot.lotReference,
+                detail: `${lot.remainingBoxes} boxes remaining`,
+                meta: `${formatCurrency(lot.costPerBox)}/box`,
+              }))}
+              mode="list"
+              maxVisible={4}
+              placeholder="Search lot reference…"
+              emptyText="No lots found for this product."
+            />
           </div>
         )}
 
