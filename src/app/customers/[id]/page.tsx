@@ -66,9 +66,9 @@ export default function CustomerProfilePage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 bg-card border rounded-xl p-6">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 rounded-2xl border border-border/80 bg-card shadow-sm p-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">{customer.name}</h1>
+          <h1 className="text-3xl font-semibold tracking-tight mb-2">{customer.name}</h1>
           {customer.businessName && <p className="text-muted-foreground mb-4">{customer.businessName}</p>}
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground">Outstanding:</span>
@@ -84,19 +84,19 @@ export default function CustomerProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-card border rounded-xl p-4">
+            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Credit Limit</p>
               <p className="text-xl font-semibold tabular-nums">{formatCurrency(creditLimit)}</p>
             </div>
-            <div className="bg-card border rounded-xl p-4">
+            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Credit Terms</p>
               <p className="text-xl font-semibold tabular-nums">{customer.creditTermsDays || 0} days</p>
             </div>
           </div>
           
-          <div className="bg-card border rounded-xl overflow-hidden">
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b">
-              <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Recent Transactions</h2>
+              <h2 className="text-sm font-semibold tracking-tight text-foreground">Recent Transactions</h2>
             </div>
             {ledgerError && (
               <div className="p-8 text-center text-destructive text-sm">{ledgerError}</div>
@@ -108,7 +108,7 @@ export default function CustomerProfilePage() {
             )}
             {!ledgerError && ledger.length > 0 && (
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
+                <thead className="text-xs font-semibold text-muted-foreground bg-muted/50 border-b">
                   <tr>
                     <th className="px-6 py-2.5 font-medium">Date</th>
                     <th className="px-6 py-2.5 font-medium">Type</th>
@@ -141,8 +141,8 @@ export default function CustomerProfilePage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-card border rounded-xl p-6">
-            <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Contact Information</h2>
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6">
+            <h2 className="text-sm font-semibold tracking-tight text-foreground mb-4">Contact Information</h2>
             <div className="space-y-4 text-sm">
               <div className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
