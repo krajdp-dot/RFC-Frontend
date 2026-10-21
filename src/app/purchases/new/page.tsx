@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { fetchApi } from "@/lib/fetchApi";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 type Option = {
   id: string;
@@ -238,7 +239,7 @@ export default function NewPurchasePage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-3xl mx-auto">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
       <PageHeader
         title="New Purchase"
         subtitle="Record an incoming purchase from a supplier."
@@ -262,32 +263,28 @@ export default function NewPurchasePage() {
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <div className="bg-card border rounded-xl p-5 flex flex-col gap-4">
+        <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm flex flex-col gap-4">
           <h2 className="font-semibold text-lg">General Info</h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(240px,1fr)]">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Supplier</label>
 
-              <select
-                required
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={formData.supplierId}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    supplierId: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Supplier</option>
-
-                {suppliers.map((supplier) => (
-                  <option key={supplier.id} value={supplier.id}>
-                    {supplier.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(supplierId) => setFormData({ ...formData, supplierId })}
+                options={suppliers.map((supplier) => ({
+                  value: supplier.id,
+                  label: supplier.name,
+                  icon: undefined,
+                }))}
+                mode="list"
+                maxVisible={4}
+                placeholder="Search suppliers…"
+                emptyText="No suppliers found."
+                disabled={loadingOptions}
+                className="rounded-xl"
+              />
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -328,22 +325,19 @@ export default function NewPurchasePage() {
               key={index}
               className="flex items-center gap-3 bg-muted/30 p-3 rounded-lg border"
             >
-              <select
-                required
-                className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={item.productId}
-                onChange={(e) =>
-                  handleItemChange(index, "productId", e.target.value)
-                }
-              >
-                <option value="">Select Product</option>
-
-                {products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
+              <div className="min-w-0 flex-1">
+                <QuickPick
+                  value={item.productId}
+                  onChange={(productId) => handleItemChange(index, "productId", productId)}
+                  options={products.map((product) => ({ value: product.id, label: product.name }))}
+                  mode="list"
+                  maxVisible={4}
+                  placeholder="Search fruit or product…"
+                  searchPlaceholder="Find fruit / product…"
+                  emptyText="No products found."
+                  className="min-w-0"
+                />
+              </div>
 
               <Input
                 type="number"
@@ -394,7 +388,7 @@ export default function NewPurchasePage() {
         <div className="bg-card border rounded-xl p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-lg">Additional Costs</h2>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Transport</label>
               <Input
@@ -468,22 +462,24 @@ export default function NewPurchasePage() {
 
           {formData.payments.map((payment, index) => (
             <div key={index} className="flex items-center gap-3">
-              <select
-                className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={payment.accountId}
-                onChange={(e) => handlePaymentChange(index, "accountId", e.target.value)}
-              >
-                <option value="">
-                  No Payment (Credit) / Select Account
-                </option>
-
-                {accounts.map((account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                    {account.type ? ` (${account.type})` : ""}
-                  </option>
-                ))}
-              </select>
+              <div className="min-w-0 flex-1">
+                <QuickPick
+                  value={payment.accountId}
+                  onChange={(accountId) => handlePaymentChange(index, "accountId", accountId)}
+                  options={[
+                    { value: "", label: "Credit / no payment", detail: "Leave outstanding" },
+                    ...accounts.map((account) => ({
+                      value: account.id,
+                      label: account.name,
+                      detail: account.type || "Payment account",
+                    })),
+                  ]}
+                  mode="segments"
+                  maxVisible={6}
+                  placeholder="Search accounts…"
+                  emptyText="No payment accounts found."
+                />
+              </div>
 
               <Input
                 type="number"

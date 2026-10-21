@@ -93,7 +93,7 @@ export default function ProductsPage() {
         primaryAction={{ label: "Add Product", onClick: () => setShowAdd(true), permission: PERMISSIONS.PRODUCTS_EDIT }}
       />
 
-      <div className="bg-card border rounded-xl overflow-hidden">
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
         {loading && <div className="p-8 text-center text-muted-foreground">Loading products...</div>}
         {!loading && error && (
           <div className="p-8 text-center text-destructive">
@@ -106,7 +106,7 @@ export default function ProductsPage() {
         )}
         {!loading && !error && products.length > 0 && (
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
+            <thead className="text-xs font-semibold text-muted-foreground bg-muted/50 border-b">
               <tr>
                 <th className="px-4 py-3 font-medium">Product</th>
                 <th className="px-4 py-3 font-medium">Category</th>

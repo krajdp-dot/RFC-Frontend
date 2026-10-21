@@ -17,6 +17,7 @@ import { TeamSection } from "@/components/settings/TeamSection";
 import { WhatsAppSettingsSection } from "@/components/settings/WhatsAppSettingsSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { PERMISSIONS } from "@/lib/permissions";
+import { QuickPick } from "@/components/shared/QuickPick";
 import { 
   Building2, 
   Tag, 
@@ -112,9 +113,9 @@ export default function SettingsPage() {
       {loading ? (
         <div className="p-12 text-center text-muted-foreground">Loading settings...</div>
       ) : (
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="mx-auto max-w-5xl space-y-5">
           {/* BUSINESS PROFILE */}
-          <section className="bg-card border rounded-xl overflow-hidden">
+          <section className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
             <div className="p-4 border-b bg-muted/20">
               <div className="flex items-center space-x-2">
                 <Building2 className="h-5 w-5 text-primary" />
@@ -216,7 +217,7 @@ export default function SettingsPage() {
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Add Account</DialogTitle>
           </DialogHeader>
@@ -231,15 +232,19 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Type</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-              >
-                <option value="CASH">Cash</option>
-                <option value="BANK">Bank</option>
-                <option value="DIGITAL">Digital / UPI</option>
-              </select>
+                onChange={(type) => setForm({ ...form, type })}
+                options={[
+                  { value: "CASH", label: "Cash", detail: "Physical cash" },
+                  { value: "BANK", label: "Bank", detail: "Current or savings account" },
+                  { value: "DIGITAL", label: "Digital / UPI", detail: "Wallet and UPI collections" },
+                ]}
+                mode="grid"
+                columns={3}
+                searchable={false}
+                maxVisible={3}
+              />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Opening Balance (optional)</label>

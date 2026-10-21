@@ -88,7 +88,7 @@ export default function MoneyFlowPage() {
       )}
 
       {!loading && error && (
-        <div className="p-8 text-center text-destructive bg-card border rounded-xl">
+        <div className="p-8 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">
           <p>{error}</p>
         </div>
       )}
@@ -96,8 +96,8 @@ export default function MoneyFlowPage() {
       {!loading && !error && data && (
         <>
           {/* Money Flow Waterfall */}
-          <div className="bg-card border rounded-xl p-6 lg:p-8">
-            <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-8">Cash Flow Statement ({period})</h2>
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 lg:p-8">
+            <h2 className="text-sm font-semibold tracking-tight text-foreground mb-8">Cash Flow Statement ({period})</h2>
             
             <div className="space-y-4 text-lg">
               {/* Opening Balance */}

@@ -81,9 +81,9 @@ export default function PurchasesPage() {
       
       <MetricStrip metrics={metrics} />
       
-      <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Recent Purchases</h2>
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">Recent Purchases</h2>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -121,7 +121,7 @@ export default function PurchasesPage() {
         {!loading && !error && purchases.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground bg-muted/30 uppercase border-b">
+              <thead className="text-xs font-semibold text-muted-foreground bg-muted/50 border-b">
                 <tr>
                   <th className="px-4 py-3 font-medium">Date</th>
                   <th className="px-4 py-3 font-medium">Purchase ID</th>

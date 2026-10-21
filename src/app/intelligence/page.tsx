@@ -73,12 +73,12 @@ function SignalGroup({
   const style = TIER_STYLE[tier];
   const { Icon } = style;
   return (
-    <div className="bg-card border rounded-xl overflow-hidden">
+    <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
       <div className="p-4 border-b flex items-center gap-2">
         {signals.length > 0 && (
           <span className={cn("w-2 h-2 rounded-full shrink-0", style.dot, style.pulse && "animate-pulse")} />
         )}
-        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground grow">{title}</h2>
+        <h2 className="text-sm font-semibold tracking-tight text-foreground grow">{title}</h2>
         {signals.length > 0 && (
           <span className="px-2 py-0.5 rounded-full bg-muted text-xs font-medium">{signals.length}</span>
         )}
@@ -133,7 +133,7 @@ function TrendTile({
   return (
     <Link
       href={href}
-      className="bg-card border rounded-xl p-4 flex flex-col gap-1 hover:bg-muted/30 transition-colors min-w-0"
+      className="rounded-2xl border border-border/80 bg-card shadow-sm p-4 flex flex-col gap-1 hover:bg-muted/30 transition-colors min-w-0"
     >
       <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
       <div className="flex items-baseline gap-2 flex-wrap">
@@ -189,7 +189,7 @@ export default function IntelligencePage() {
     return (
       <div className="space-y-6 pb-12">
         <PageHeader title="Intelligence" subtitle="Your morning briefing across the whole business." />
-        <div className="p-12 text-center text-destructive bg-card border rounded-xl">{error}</div>
+        <div className="p-12 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">{error}</div>
       </div>
     );
   }
@@ -261,7 +261,7 @@ export default function IntelligencePage() {
       />
 
       <div>
-        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Trends</h2>
+        <h2 className="text-sm font-semibold tracking-tight text-foreground mb-3">Trends</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <TrendTile
             label="Sales"

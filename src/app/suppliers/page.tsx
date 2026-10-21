@@ -157,9 +157,9 @@ export default function SuppliersPage() {
 
       <MetricStrip metrics={metrics} />
 
-      <div className="bg-card border rounded-xl overflow-hidden">
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b flex items-center justify-between gap-4">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">
             Supplier List
           </h2>
           <input

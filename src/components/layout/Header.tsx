@@ -54,8 +54,8 @@ export function Header() {
   const crumbs = segments.length ? segments : ["dashboard"];
 
   return (
-    <header className="sticky top-0 z-30 flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-border/80 bg-background/95 px-4 backdrop-blur sm:px-6">
-      <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 overflow-hidden text-[13px]">
+    <header className="sticky top-0 z-30 flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-border/70 bg-background/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 overflow-hidden text-[13px] sm:text-sm">
         {crumbs.map((segment, index) => (
           <span key={`${segment}-${index}`} className="flex min-w-0 items-center gap-1.5">
             {index > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />}
@@ -76,7 +76,7 @@ export function Header() {
         )}
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <DropdownMenuTrigger className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:-translate-y-px hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <Plus className="h-4 w-4" />
             <span>New</span>
           </DropdownMenuTrigger>

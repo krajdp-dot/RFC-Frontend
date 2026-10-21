@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { fetchApi } from '@/lib/fetchApi';
+import { QuickPick } from '@/components/shared/QuickPick';
 
 interface AddProductModalProps {
   onClose: () => void;
@@ -51,7 +52,7 @@ export function AddProductModal({ onClose, onSuccess }: AddProductModalProps) {
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-card w-full max-w-lg rounded-xl border shadow-lg flex flex-col max-h-[90vh]">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold">Add New Product</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Add New Product</h2>
           <p className="text-sm text-muted-foreground mt-1">Create a new product in the catalog.</p>
         </div>
         
@@ -101,17 +102,20 @@ export function AddProductModal({ onClose, onSuccess }: AddProductModalProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Primary Unit <span className="text-destructive">*</span></label>
-                <select 
-                  required
+                <QuickPick
                   value={primaryUnit}
-                  onChange={e => setPrimaryUnit(e.target.value)}
-                  className="w-full p-2 bg-background border rounded-lg text-sm"
-                >
-                  <option value="BOX">BOX</option>
-                  <option value="KG">KG</option>
-                  <option value="PIECE">PIECE</option>
-                  <option value="CRATE">CRATE</option>
-                </select>
+                  onChange={setPrimaryUnit}
+                  options={[
+                    { value: "BOX", label: "Box", detail: "Standard carton" },
+                    { value: "KG", label: "Kilogram", detail: "Weight-based" },
+                    { value: "PIECE", label: "Piece", detail: "Individual item" },
+                    { value: "CRATE", label: "Crate", detail: "Bulk container" },
+                  ]}
+                  mode="grid"
+                  columns={2}
+                  searchable={false}
+                  maxVisible={4}
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Default Box Weight (Kg)</label>

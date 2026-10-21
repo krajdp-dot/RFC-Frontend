@@ -73,8 +73,8 @@ export default function PayablesPage() {
       <MetricStrip metrics={metrics} />
 
       {/* Ageing Breakdown */}
-      <div className="bg-card border rounded-xl p-6">
-        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Ageing Breakdown</h2>
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6">
+        <h2 className="text-sm font-semibold tracking-tight text-foreground mb-4">Ageing Breakdown</h2>
         <div className="flex h-8 rounded-md overflow-hidden mb-4 bg-muted">
           <div className="bg-emerald-500" style={{ width: `${bucket0to15Pct}%` }} title={`0-15 days: ${formatCurrency(summary?.due0To15)}`}></div>
           <div className="bg-amber-500" style={{ width: `${bucket16to30Pct}%` }} title={`16-30 days: ${formatCurrency(summary?.due16To30)}`}></div>
@@ -101,9 +101,9 @@ export default function PayablesPage() {
         </div>
       </div>
 
-      <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
         <div className="px-6 py-4 border-b flex justify-between items-center">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Supplier Payables</h2>
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">Supplier Payables</h2>
           <Button variant="outline" size="sm" onClick={loadData}>Refresh</Button>
         </div>
         

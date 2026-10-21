@@ -102,7 +102,7 @@ export default function SalesReturnsPage() {
       />
 
       {!result && (
-        <form onSubmit={handleSearch} className="bg-card border rounded-xl p-5 flex items-center gap-3">
+        <form onSubmit={handleSearch} className="rounded-2xl border border-border/80 bg-card shadow-sm p-5 flex items-center gap-3">
           <Input
             placeholder="Sale reference (e.g. SALE-1) or customer name"
             value={reference}
@@ -117,7 +117,7 @@ export default function SalesReturnsPage() {
       {searchError && <p className="text-sm text-destructive">{searchError}</p>}
 
       {sale && !result && (
-        <div className="bg-card border rounded-xl p-5 space-y-4">
+        <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-5 space-y-4">
           <div className="flex justify-between items-baseline">
             <div>
               <p className="font-semibold">{sale.saleReference}</p>
@@ -185,7 +185,7 @@ export default function SalesReturnsPage() {
       )}
 
       {result && (
-        <div className="bg-card border rounded-xl p-6 space-y-4">
+        <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 space-y-4">
           <p className="font-semibold text-emerald-600">Return processed.</p>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>

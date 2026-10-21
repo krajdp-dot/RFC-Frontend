@@ -43,7 +43,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
       >
         <Header />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-6">
+        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8">
           {blocked ? <NoAccess role={role} /> : children}
         </main>
       </div>

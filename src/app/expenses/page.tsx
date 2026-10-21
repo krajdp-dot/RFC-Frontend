@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 import { PERMISSIONS } from "@/lib/permissions";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -179,7 +180,7 @@ export default function ExpensesPage() {
   const colors = ["bg-blue-500", "bg-amber-500", "bg-green-500", "bg-purple-500", "bg-red-500", "bg-slate-500"];
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-7xl mx-auto">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
       <PageHeader 
         title="Expenses" 
         subtitle="Understand where business money is going." 
@@ -187,23 +188,26 @@ export default function ExpensesPage() {
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Record Expense</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="text-sm font-medium mb-1 block">Category</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.categoryId}
-                onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-              >
-                <option value="">Select category</option>
-                {categories.map((c: any) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+                onChange={(categoryId) => setForm({ ...form, categoryId })}
+                options={categories.map((category: any) => ({
+                  value: category.id,
+                  label: category.name,
+                }))}
+                mode="grid"
+                columns={2}
+                maxVisible={6}
+                searchable={categories.length > 4}
+                emptyText="No expense categories found."
+              />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Description</label>
@@ -235,16 +239,20 @@ export default function ExpensesPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Paid From</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.accountId}
-                onChange={(e) => setForm({ ...form, accountId: e.target.value })}
-              >
-                <option value="">Select account</option>
-                {accounts.map((a: any) => (
-                  <option key={a.id} value={a.id}>{a.name} ({a.type})</option>
-                ))}
-              </select>
+                onChange={(accountId) => setForm({ ...form, accountId })}
+                options={accounts.map((account: any) => ({
+                  value: account.id,
+                  label: account.name,
+                  detail: account.type,
+                }))}
+                mode="grid"
+                columns={2}
+                maxVisible={4}
+                placeholder="Search payment accounts…"
+                emptyText="No accounts found."
+              />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Payee (optional)</label>
@@ -269,7 +277,7 @@ export default function ExpensesPage() {
       <MetricStrip metrics={metrics} />
       
       {breakdown.length > 0 && (
-        <div className="bg-card border rounded-xl p-5 flex flex-col">
+        <div className="flex flex-col rounded-2xl border border-border/80 bg-card p-5 shadow-sm">
           <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-6">Where did money go? (This Month)</h2>
           
           <div className="space-y-6">
@@ -302,7 +310,7 @@ export default function ExpensesPage() {
         </div>
       )}
       
-      <div className="bg-card border rounded-xl overflow-hidden flex flex-col">
+      <div className="flex flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
           <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Recent Expenses</h2>
           <div className="flex items-center gap-2">
