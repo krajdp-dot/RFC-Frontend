@@ -71,7 +71,7 @@ export default function InventoryPage() {
         ]}
       />
 
-      <div className="bg-card border rounded-xl overflow-hidden">
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
           <div className="relative w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -109,7 +109,7 @@ export default function InventoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-[13px] font-semibold uppercase tracking-wider text-muted-foreground text-left">
+                <tr className="border-b text-sm font-semibold tracking-tight text-foreground text-left">
                   <th className="px-4 py-3 font-semibold">Product</th>
                   <th className="px-4 py-3 text-right font-semibold">Available</th>
                   <th className="px-4 py-3 text-right font-semibold whitespace-nowrap">Unit</th>
