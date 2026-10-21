@@ -124,14 +124,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-20 flex flex-col bg-sidebar border-r border-sidebar-border text-sidebar-foreground transition-all duration-200",
+        "fixed inset-y-0 left-0 z-20 flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-[8px_0_32px_rgba(12,28,18,0.04)] transition-all duration-200",
         collapsed ? "w-[72px]" : "w-[256px]"
       )}
     >
       {/* Brand */}
       <div className="flex h-14 items-center justify-center shrink-0 px-4 border-b border-sidebar-border">
         <div className={cn("flex items-center w-full", collapsed ? "justify-center" : "justify-start gap-3")}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0">
             <Diamond className="h-5 w-5" />
           </div>
           {!collapsed && (
@@ -144,11 +144,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* Nav */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 px-3 flex flex-col gap-6 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-5 flex flex-col gap-5 custom-scrollbar">
         {visibleGroups.map((group, i) => (
           <div key={i} className="flex flex-col gap-1.5">
             {!collapsed && (
-              <div className="text-[10px] uppercase tracking-widest text-sidebar-foreground/50 px-2 font-semibold mb-1">
+              <div className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sidebar-foreground/45">
                 {group.label}
               </div>
             )}
@@ -159,16 +159,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   key={j}
                   href={item.href}
                   className={cn(
-                    "relative flex items-center gap-2.5 rounded-md py-1.5 px-2.5 text-[13px] font-medium transition-colors group",
+                    "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-150",
                     isActive 
-                      ? "bg-primary/8 text-primary" 
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                    collapsed && "justify-center px-0 h-9 w-9 mx-auto"
+                      ? "bg-sidebar-accent text-sidebar-primary shadow-sm" 
+                      : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground",
+                    collapsed && "mx-auto h-10 w-10 justify-center px-0"
                   )}
                   title={collapsed ? item.name : undefined}
                 >
                   {isActive && (
-                    <div className="absolute left-0 top-1.5 bottom-1.5 w-0.5 bg-primary rounded-r-full" />
+                    <div className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-sidebar-primary" />
                   )}
                   <item.icon className="h-[18px] w-[18px] shrink-0" />
                   {!collapsed && <span>{item.name}</span>}
