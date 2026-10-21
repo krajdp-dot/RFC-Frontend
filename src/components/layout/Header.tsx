@@ -1,94 +1,104 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Calendar, Bell, Search, Plus, ShoppingCart, Package, Receipt, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Calendar, ChevronRight, Plus, ShoppingCart, Package, Receipt, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Can } from "@/components/auth/Can";
 import { PERMISSIONS } from "@/lib/permissions";
 import { ConnectivityBadge } from "@/components/offline/ConnectivityBadge";
 
+const routeNames: Record<string, string> = {
+  dashboard: "Home",
+  sales: "Sales",
+  new: "New entry",
+  purchases: "Purchases",
+  inventory: "Stock",
+  customers: "Customers",
+  suppliers: "Suppliers",
+  receivables: "Money to collect",
+  payables: "Supplier payments",
+  expenses: "Expenses",
+  cash: "Cash",
+  "day-close": "Day close",
+  reports: "Reports",
+  analytics: "Analytics",
+  intelligence: "Insights",
+  products: "Fruit & products",
+  "price-board": "Price board",
+  "money-flow": "Money movement",
+  settings: "Settings",
+  freshness: "Freshness",
+  sync: "Sync status",
+  returns: "Sales returns",
+  wastage: "Wastage",
+  "receive-payment": "Receive money",
+  "make-payment": "Make payment",
+  "bulk-lot": "Bulk lot sale",
+};
+
+function readableSegment(segment: string) {
+  return routeNames[segment] || segment.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 export function Header() {
   const router = useRouter();
-  // Was a hardcoded "Today, 13 Aug 2026" regardless of the actual date.
-  // Rendered client-side (not on the server) to avoid a hydration mismatch
-  // between server render time and the visitor's own clock.
+  const pathname = usePathname();
   const [today, setToday] = useState<string | null>(null);
+
   useEffect(() => {
-    setToday(
-      new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
-    );
+    setToday(new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }));
   }, []);
 
+  const segments = (pathname || "/").split("/").filter(Boolean);
+  const crumbs = segments.length ? segments : ["dashboard"];
+
   return (
-    <header className="h-14 border-b border-border bg-background flex items-center justify-between px-6 shrink-0">
-      <div className="flex items-center gap-2 text-[13px]">
-        <span className="text-muted-foreground">Overview</span>
-        <span className="text-muted-foreground">/</span>
-        <span className="text-foreground font-medium">Dashboard</span>
-      </div>
+    <header className="sticky top-0 z-30 flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-border/80 bg-background/95 px-4 backdrop-blur sm:px-6">
+      <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 overflow-hidden text-[13px]">
+        {crumbs.map((segment, index) => (
+          <span key={`${segment}-${index}`} className="flex min-w-0 items-center gap-1.5">
+            {index > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />}
+            <span className={index === crumbs.length - 1 ? "truncate font-semibold text-foreground" : "truncate text-muted-foreground"}>
+              {readableSegment(segment)}
+            </span>
+          </span>
+        ))}
+      </nav>
 
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <ConnectivityBadge />
-
-        {/* Command Search */}
-        <Button variant="outline" className="flex justify-between w-[260px] h-8 px-3 bg-muted/30 hover:bg-muted/50 text-muted-foreground text-[13px] font-normal border-dashed">
-          <div className="flex items-center gap-2">
-            <Search className="h-3.5 w-3.5" />
-            <span>Search or jump to...</span>
+        {today && (
+          <div className="hidden h-8 items-center gap-2 rounded-lg border border-border px-2.5 text-xs text-muted-foreground md:flex">
+            <Calendar className="h-3.5 w-3.5" />
+            <span>{today}</span>
           </div>
-          <kbd className="inline-flex items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-            <span className="text-xs">⌘</span>K
-          </kbd>
-        </Button>
+        )}
 
-        <div className="h-4 w-px bg-border" />
-
-        {/* Date Display */}
-        <div className="flex items-center gap-2 h-8 px-3 rounded-md border border-input text-[13px] font-medium text-muted-foreground bg-background">
-          <Calendar className="h-3.5 w-3.5" />
-          <span>{today ? `Today, ${today}` : "\u00A0"}</span>
-        </div>
-
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 text-muted-foreground">
-          <Bell className="h-[18px] w-[18px]" />
-          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-destructive ring-2 ring-background" />
-        </Button>
-
-        {/* New Transaction \u2014 was a button with no menu behind it */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground hover:bg-primary/90">
-            <Plus className="h-3.5 w-3.5" />
+          <DropdownMenuTrigger className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <Plus className="h-4 w-4" />
             <span>New</span>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* Phase 10: the quick-create menu offers only what this role
-                can actually complete. */}
+          <DropdownMenuContent align="end" className="w-48">
             <Can permission={PERMISSIONS.SALES_CREATE}>
               <DropdownMenuItem onClick={() => router.push("/sales/new")}>
-                <ShoppingCart className="h-3.5 w-3.5 mr-2" /> New Sale
+                <ShoppingCart className="mr-2 h-4 w-4" /> Record sale
               </DropdownMenuItem>
             </Can>
             <Can permission={PERMISSIONS.PURCHASES_CREATE}>
               <DropdownMenuItem onClick={() => router.push("/purchases/new")}>
-                <Package className="h-3.5 w-3.5 mr-2" /> New Purchase
+                <Package className="mr-2 h-4 w-4" /> Add purchase
               </DropdownMenuItem>
             </Can>
             <Can permission={PERMISSIONS.EXPENSES_CREATE}>
               <DropdownMenuItem onClick={() => router.push("/expenses")}>
-                <Receipt className="h-3.5 w-3.5 mr-2" /> New Expense
+                <Receipt className="mr-2 h-4 w-4" /> Record expense
               </DropdownMenuItem>
             </Can>
             <Can permission={PERMISSIONS.INVENTORY_WASTAGE}>
               <DropdownMenuItem onClick={() => router.push("/inventory/wastage")}>
-                <Trash2 className="h-3.5 w-3.5 mr-2" /> Record Wastage
+                <Trash2 className="mr-2 h-4 w-4" /> Record wastage
               </DropdownMenuItem>
             </Can>
           </DropdownMenuContent>
