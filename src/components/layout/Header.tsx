@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Can } from "@/components/auth/Can";
 import { PERMISSIONS } from "@/lib/permissions";
 import { ConnectivityBadge } from "@/components/offline/ConnectivityBadge";
+import { cn } from "@/lib/utils";
 
 const routeNames: Record<string, string> = {
   dashboard: "Home",
@@ -54,7 +55,7 @@ export function Header() {
   const crumbs = segments.length ? segments : ["dashboard"];
 
   return (
-    <header className="sticky top-0 z-30 flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-border/70 bg-background/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+    <header className={cn("sticky top-0 z-30 flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-border/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8", pathname === "/" ? "bg-white" : "bg-background/90")}>
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 overflow-hidden text-[13px] sm:text-sm">
         {crumbs.map((segment, index) => (
           <span key={`${segment}-${index}`} className="flex min-w-0 items-center gap-1.5">
