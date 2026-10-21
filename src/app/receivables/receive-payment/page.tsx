@@ -12,6 +12,7 @@ import { useOffline } from "@/contexts/OfflineContext";
 import { submitWithOfflineFallback } from "@/lib/offline/offlineMutate";
 import { setCache, getCache, CACHE_KEYS, formatAge } from "@/lib/offline/cacheStore";
 import { PostSaleWhatsAppOffer } from "@/components/whatsapp/PostSaleWhatsAppOffer";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -179,7 +180,7 @@ export default function ReceivePaymentPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-6 p-6 w-full max-w-3xl mx-auto">
+      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6 px-1 pb-12">
         <div className="p-8 text-center text-muted-foreground">
           Loading...
         </div>
@@ -235,24 +236,24 @@ export default function ReceivePaymentPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-card border rounded-xl p-6 flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm sm:p-7 flex flex-col gap-6">
         {/* Customer */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-muted-foreground">Customer *</label>
-          <select
+          <QuickPick
             value={form.customerId}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, customerId: e.target.value, saleId: "" }))
-            }
-            className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            <option value="">Select customer...</option>
-            {customers.map((c: any) => (
-              <option key={c.id} value={c.id}>
-                {c.name} {c.businessName ? `(${c.businessName})` : ""}
-              </option>
-            ))}
-          </select>
+            onChange={(customerId) => setForm((f) => ({ ...f, customerId, saleId: "" }))}
+            options={customers.map((customer: any) => ({
+              value: customer.id,
+              label: customer.name,
+              detail: customer.businessName || customer.phone || undefined,
+            }))}
+            mode="list"
+            maxVisible={4}
+            placeholder="Search customer…"
+            searchPlaceholder="Find customer by name…"
+            emptyText="No customer matches that search."
+          />
         </div>
 
         {/* Sale (optional) */}
@@ -261,23 +262,29 @@ export default function ReceivePaymentPage() {
             <label className="text-sm font-medium text-muted-foreground">
               Against Sale (optional)
             </label>
-            <select
+            <QuickPick
               value={form.saleId}
-              onChange={(e) => setForm((f) => ({ ...f, saleId: e.target.value }))}
-              className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            >
-              <option value="">General payment (no specific sale)</option>
-              {creditSales.map((s: any) => (
-                <option key={s.id} value={s.id}>
-                  {s.saleReference} — Outstanding: {formatCurrency(s.creditAmount)}
-                </option>
-              ))}
-            </select>
+              onChange={(saleId) => setForm((f) => ({ ...f, saleId }))}
+              options={[
+                { value: "", label: "General account payment", detail: "No specific sale selected" },
+                ...creditSales.map((sale: any) => ({
+                  value: sale.id,
+                  label: sale.saleReference,
+                  detail: `Outstanding ${formatCurrency(sale.creditAmount)}`,
+                  meta: formatCurrency(sale.creditAmount),
+                })),
+              ]}
+              mode="list"
+              maxVisible={4}
+              placeholder="Search open sales…"
+              searchPlaceholder="Find sale reference…"
+              emptyText="No open credit sales found."
+            />
           </div>
         )}
 
         {/* Amount + Method row */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-muted-foreground">Amount (₹) *</label>
             <input
@@ -293,17 +300,14 @@ export default function ReceivePaymentPage() {
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-muted-foreground">Method *</label>
-            <select
+            <QuickPick
               value={form.method}
-              onChange={(e) => setForm((f) => ({ ...f, method: e.target.value }))}
-              className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            >
-              {PAYMENT_METHODS.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
+              onChange={(method) => setForm((f) => ({ ...f, method }))}
+              options={PAYMENT_METHODS.map((method) => ({ value: method.value, label: method.label }))}
+              mode="segments"
+              searchable={false}
+              maxVisible={4}
+            />
           </div>
         </div>
 
@@ -311,19 +315,20 @@ export default function ReceivePaymentPage() {
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-muted-foreground">Deposit Account *</label>
-            <select
+            <QuickPick
               value={form.accountId}
-              onChange={(e) => setForm((f) => ({ ...f, accountId: e.target.value }))}
-              className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              required
-            >
-              <option value="">Select account...</option>
-              {accounts.map((a: any) => (
-                <option key={a.id} value={a.id}>
-                  {a.name} ({a.type})
-                </option>
-              ))}
-            </select>
+              onChange={(accountId) => setForm((f) => ({ ...f, accountId }))}
+              options={accounts.map((account: any) => ({
+                value: account.id,
+                label: account.name,
+                detail: account.type,
+              }))}
+              mode="grid"
+              columns={2}
+              maxVisible={4}
+              placeholder="Search deposit accounts…"
+              emptyText="No deposit accounts found."
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-muted-foreground">Business Date *</label>
