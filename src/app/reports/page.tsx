@@ -75,7 +75,7 @@ export default function ReportsPage() {
       <div className="space-y-8">
         {reportGroups.map((group) => (
           <section key={group.label} className="space-y-4">
-            <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h2 className="text-sm font-semibold tracking-tight text-foreground">
               {group.label}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -83,7 +83,7 @@ export default function ReportsPage() {
                 <div
                   key={report.title}
                   onClick={report.href ? () => router.push(report.href) : undefined}
-                  className={`bg-card border rounded-xl p-4 transition flex flex-col space-y-2 group ${
+                  className={`rounded-2xl border border-border/80 bg-card shadow-sm p-4 transition flex flex-col space-y-2 group ${
                     report.href ? "hover:bg-muted/30 cursor-pointer" : "opacity-60"
                   }`}
                 >
