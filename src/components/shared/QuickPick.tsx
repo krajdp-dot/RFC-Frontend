@@ -106,7 +106,7 @@ export function QuickPick({
         </div>
       )}
 
-      {selected && (
+      {selected && mode !== "segments" && (
         <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
           <span className="shrink-0">Selected</span>
           <span className="truncate rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 font-semibold text-primary">
