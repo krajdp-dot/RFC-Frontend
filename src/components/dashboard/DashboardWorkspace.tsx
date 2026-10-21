@@ -565,7 +565,7 @@ export default function DashboardWorkspace() {
     anchor.href = url;
     anchor.download = `rfc-transactions-${startDate}-to-${endDate}.csv`;
     anchor.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   return (
@@ -799,6 +799,11 @@ export default function DashboardWorkspace() {
           {canReceivePayments && (
             <Link href="/receivables/receive-payment" className="inline-flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
               <Wallet className="h-4 w-4" /> Record payment
+            </Link>
+          )}
+          {canMakePayments && (
+            <Link href="/payables/make-payment" className="inline-flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+              <ArrowUpRight className="h-4 w-4" /> Pay supplier
             </Link>
           )}
           <Link href="/day-close" className="inline-flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
