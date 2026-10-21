@@ -301,10 +301,36 @@ export default function NewSalePage() {
         const active = payments.filter(
           (payment) => payment.accountId && payment.amount > 0,
         );
-        payments.splice(0, payments.length, ...active, {
-          accountId: account.id,
-          amount: remaining,
-        });
+        // If the first account currently holds the entire sale amount, adding
+        // a second account starts with an even split rather than making the
+        // second payment silently zero or double-counting the sale.
+        if (
+          active.length === 1 &&
+          totalFor(current) > 0 &&
+          Number(active[0].amount) >= totalFor(current)
+        ) {
+          const firstPaymentIndex = payments.findIndex(
+            (payment) => payment.accountId === active[0].accountId,
+          );
+          const firstHalf = Math.round((totalFor(current) / 2) * 100) / 100;
+          if (firstPaymentIndex >= 0) {
+            payments[firstPaymentIndex] = {
+              ...payments[firstPaymentIndex],
+              amount: firstHalf,
+            };
+          }
+          payments.splice(0, payments.length, ...payments.filter(
+            (payment) => payment.accountId && payment.accountId !== account.id,
+          ), {
+            accountId: account.id,
+            amount: Math.round((totalFor(current) - firstHalf) * 100) / 100,
+          });
+        } else {
+          payments.splice(0, payments.length, ...active, {
+            accountId: account.id,
+            amount: remaining,
+          });
+        }
       }
 
       return { ...current, payments };
