@@ -564,7 +564,6 @@ export default function DashboardWorkspace() {
       action: "Review close",
     }] : []),
   ];
-  const criticalAlerts = alerts.filter((alert) => alert.severity === "HIGH").length;
   const chartHasActivity = (analytics?.trend || []).some((point: any) =>
     (canViewSales && Number(point.sales) !== 0) || (canViewPurchases && Number(point.purchases) !== 0)
   );
@@ -706,7 +705,7 @@ export default function DashboardWorkspace() {
                   className="relative h-10 w-10 rounded-xl border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
                 >
                   <Bell className="h-4 w-4" />
-                  {criticalAlerts > 0 && (
+                  {alerts.length > 0 && (
                     <span className="absolute right-2 top-2 h-2 w-2 rounded-full border border-white bg-emerald-700" />
                   )}
                 </Button>
@@ -839,9 +838,11 @@ export default function DashboardWorkspace() {
               <ArrowUpRight className="h-4 w-4" /> Pay supplier
             </Link>
           )}
-          <Link href="/day-close" className="inline-flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
-            <CalendarDays className="h-4 w-4" /> Day close
-          </Link>
+          {canPreviewDayClose && (
+            <Link href="/day-close" className="inline-flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+              <CalendarDays className="h-4 w-4" /> Day close
+            </Link>
+          )}
         </div>
       </section>
 
@@ -864,7 +865,7 @@ export default function DashboardWorkspace() {
         <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-[15px] font-semibold tracking-tight text-neutral-950">Financial overview</h2>
-            <p className="mt-1 text-xs text-neutral-500">Activity for {businessDateLabel}. Cash, receivables, payables and inventory are current positions.</p>
+            <p className="mt-1 text-xs leading-5 text-neutral-500">Activity for {businessDateLabel}. Percentage changes compare with the immediately preceding range of equal length when a nonzero baseline exists. Cash, receivables, payables and inventory are current positions.</p>
           </div>
           <span className="text-xs text-neutral-500">Amounts in INR</span>
         </div>
@@ -960,7 +961,9 @@ export default function DashboardWorkspace() {
         </div>
       </section>
 
+      {(canViewReceivables || canViewPayables) && (
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {canViewReceivables && (
         <div className="min-w-0 rounded-xl border border-neutral-200 bg-white p-4 sm:p-5">
           <SectionHeading title="Customer collections" description="Outstanding customer balances and ageing." href="/receivables" hrefLabel="Receivables" />
           {dashboardLoading ? (
@@ -987,7 +990,9 @@ export default function DashboardWorkspace() {
             </>
           )}
         </div>
+        )}
 
+        {canViewPayables && (
         <div className="min-w-0 rounded-xl border border-neutral-200 bg-white p-4 sm:p-5">
           <SectionHeading title="Supplier payments" description="Outstanding supplier balances and ageing." href="/payables" hrefLabel="Payables" />
           {dashboardLoading ? (
@@ -1014,7 +1019,9 @@ export default function DashboardWorkspace() {
             </>
           )}
         </div>
+        )}
       </section>
+      )}
 
       <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
         <div className="flex flex-col gap-3 border-b border-neutral-200 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5">
