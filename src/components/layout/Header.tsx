@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Calendar, ChevronRight, Plus, ShoppingCart, Package, Receipt, Trash2 } from "lucide-react";
+import { Calendar, ChevronRight, Plus, ShoppingCart, Package, Receipt, Trash2, Menu, X } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Can } from "@/components/auth/Can";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -42,7 +42,7 @@ function readableSegment(segment: string) {
   return routeNames[segment] || segment.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export function Header() {
+export function Header({ mobileMenuOpen = false, onMobileMenuToggle }: { mobileMenuOpen?: boolean; onMobileMenuToggle?: () => void }) {
   const router = useRouter();
   const pathname = usePathname();
   const [today, setToday] = useState<string | null>(null);
@@ -56,6 +56,10 @@ export function Header() {
 
   return (
     <header className={cn("sticky top-0 z-30 flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-border/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8", pathname === "/" ? "bg-white" : "bg-background/90")}>
+      <div className="flex min-w-0 items-center gap-2">
+        <button type="button" aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileMenuOpen} onClick={onMobileMenuToggle} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-neutral-700 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 md:hidden">
+          {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        </button>
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 overflow-hidden text-[13px] sm:text-sm">
         {crumbs.map((segment, index) => (
           <span key={`${segment}-${index}`} className="flex min-w-0 items-center gap-1.5">
@@ -66,6 +70,7 @@ export function Header() {
           </span>
         ))}
       </nav>
+      </div>
 
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <ConnectivityBadge />
