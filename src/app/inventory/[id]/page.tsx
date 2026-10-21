@@ -65,7 +65,7 @@ export default function ProductProfilePage() {
 
   if (error || !data) {
     return (
-      <div className="p-8 text-center text-destructive bg-card border rounded-xl">
+      <div className="p-8 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">
         <p>{error || "Product not found."}</p>
       </div>
     );
@@ -75,7 +75,7 @@ export default function ProductProfilePage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="bg-card border rounded-xl p-6">
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">{data.name || "Unknown Product"}</h1>
@@ -141,10 +141,10 @@ export default function ProductProfilePage() {
         </div>
 
         {activeTab === 'Stock Lots' && (
-          <div className="bg-card border rounded-xl overflow-hidden">
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-[13px] font-semibold uppercase tracking-wider text-muted-foreground text-left">
+                <tr className="border-b text-sm font-semibold tracking-tight text-foreground text-left">
                   <th className="px-4 py-3">Lot ID</th>
                   <th className="px-4 py-3 text-right">Quantity</th>
                   <th className="px-4 py-3 text-right">Cost</th>
@@ -190,7 +190,7 @@ export default function ProductProfilePage() {
         )}
 
         {activeTab !== 'Stock Lots' && (
-          <div className="bg-card border rounded-xl p-8 text-center text-muted-foreground">
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-8 text-center text-muted-foreground">
             {activeTab} records will be displayed here.
           </div>
         )}
