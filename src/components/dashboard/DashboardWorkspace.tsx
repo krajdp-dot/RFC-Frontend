@@ -321,10 +321,18 @@ export default function DashboardWorkspace() {
   const canViewProducts = can(PERMISSIONS.PRODUCTS_VIEW);
   const canViewCustomers = can(PERMISSIONS.CUSTOMERS_VIEW);
   const canViewSuppliers = can(PERMISSIONS.SUPPLIERS_VIEW);
+  const canViewInventory = can(PERMISSIONS.INVENTORY_VIEW);
+  const canViewExpenses = can(PERMISSIONS.EXPENSES_VIEW);
+  const canViewAccounts = can(PERMISSIONS.ACCOUNTS_VIEW);
+  const canViewReceivables = can(PERMISSIONS.RECEIVABLES_VIEW);
+  const canViewPayables = can(PERMISSIONS.PAYABLES_VIEW);
+  const canViewReports = can(PERMISSIONS.REPORTS_VIEW);
+  const canViewPayments = can(PERMISSIONS.PAYMENTS_VIEW);
   const canCreateSales = can(PERMISSIONS.SALES_CREATE);
   const canCreatePurchases = can(PERMISSIONS.PURCHASES_CREATE);
   const canCreateProducts = can(PERMISSIONS.PRODUCTS_EDIT);
   const canReceivePayments = can(PERMISSIONS.PAYMENTS_RECEIVE);
+  const canMakePayments = can(PERMISSIONS.PAYMENTS_MAKE);
   const canViewSettings = can(PERMISSIONS.BUSINESS_VIEW);
 
   const loadToday = useCallback(async () => {
@@ -431,7 +439,13 @@ export default function DashboardWorkspace() {
 
       const [remoteResults] = await Promise.all([Promise.all(requests)]);
       const localTransactions: SearchResult[] = (analytics?.transactions || [])
-        .filter((row: Transaction) => `${row.reference || ""} ${row.party || ""} ${transactionKind(row.type)}`.toLowerCase().includes(query.toLowerCase()))
+        .filter((row: Transaction) => {
+          if (row.type === "SALE") return canViewSales && `${row.reference || ""} ${row.party || ""} ${transactionKind(row.type)}`.toLowerCase().includes(query.toLowerCase());
+          if (row.type === "PURCHASE") return canViewPurchases && `${row.reference || ""} ${row.party || ""} ${transactionKind(row.type)}`.toLowerCase().includes(query.toLowerCase());
+          if (row.type === "EXPENSE") return canViewExpenses && `${row.reference || ""} ${row.party || ""} ${transactionKind(row.type)}`.toLowerCase().includes(query.toLowerCase());
+          if (row.type === "PAYMENT_IN" || row.type === "PAYMENT_OUT" || row.type === "REFUND") return canViewPayments && `${row.reference || ""} ${row.party || ""} ${transactionKind(row.type)}`.toLowerCase().includes(query.toLowerCase());
+          return false;
+        })
         .map((row: Transaction) => ({
           key: `transaction-${row.id}`, label: row.reference || transactionKind(row.type),
           detail: row.party || "Transaction", meta: formatCurrency(row.amount),
@@ -472,6 +486,13 @@ export default function DashboardWorkspace() {
 
   const transactions = useMemo(() => {
     let rows: Transaction[] = Array.isArray(analytics?.transactions) ? [...analytics.transactions] : [];
+    rows = rows.filter((row) => {
+      if (row.type === "SALE") return canViewSales;
+      if (row.type === "PURCHASE") return canViewPurchases;
+      if (row.type === "EXPENSE") return canViewExpenses;
+      if (row.type === "PAYMENT_IN" || row.type === "PAYMENT_OUT" || row.type === "REFUND") return canViewPayments;
+      return false;
+    });
     const query = transactionSearch.trim().toLowerCase();
     if (query) {
       rows = rows.filter((row) => `${row.reference || ""} ${row.party || ""} ${transactionKind(row.type)} ${row.paymentStatus || ""}`.toLowerCase().includes(query));
@@ -491,7 +512,7 @@ export default function DashboardWorkspace() {
       return sortDescending ? -comparison : comparison;
     });
     return rows;
-  }, [analytics, transactionSearch, transactionFilter, sortKey, sortDescending]);
+  }, [analytics, transactionSearch, transactionFilter, sortKey, sortDescending, canViewSales, canViewPurchases, canViewExpenses, canViewPayments]);
 
   const pageSize = 10;
   const pageCount = Math.max(1, Math.ceil(transactions.length / pageSize));
@@ -503,10 +524,16 @@ export default function DashboardWorkspace() {
   const cashNow = dashboardData?.moneyPosition?.available?.cash;
   const bankNow = dashboardData?.moneyPosition?.available?.bank;
   const cashBank = cashNow === undefined || bankNow === undefined ? null : Number(cashNow) + Number(bankNow);
-  const alerts: any[] = dashboardData?.alerts || [];
+  const alerts: any[] = (dashboardData?.alerts || []).filter((alert: any) => {
+    if (alert.type === "OVERDUE_RECEIVABLE") return canViewReceivables;
+    if (alert.type === "OVERDUE_PAYABLE") return canViewPayables;
+    if (alert.type === "LOW_STOCK" || alert.type === "STOCK_AT_RISK") return canViewInventory;
+    if (alert.type === "RECONCILIATION_WARNING") return can(PERMISSIONS.RECONCILIATION_VIEW) || canViewReports;
+    return can(PERMISSIONS.DASHBOARD_VIEW);
+  });
   const criticalAlerts = alerts.filter((alert) => alert.severity === "HIGH").length;
   const chartHasActivity = (analytics?.trend || []).some((point: any) =>
-    Number(point.sales) !== 0 || Number(point.purchases) !== 0 || Number(point.grossProfit) !== 0
+    (canViewSales && Number(point.sales) !== 0) || (canViewPurchases && Number(point.purchases) !== 0)
   );
   const businessDateLabel = `${formatDisplayDate(startDate)} – ${formatDisplayDate(endDate)}`;
 
@@ -804,13 +831,13 @@ export default function DashboardWorkspace() {
           <span className="text-xs text-neutral-500">Amounts in INR</span>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <KpiCard label="Total sales" value={formatCurrency(salesTotal)} subtext={analytics?.summary?.sales?.count !== undefined ? `${analytics.summary.sales.count} sales · ${businessDateLabel}` : analyticsError ? "Period data unavailable" : "Selected period"} change={analytics?.changes?.salesPct} icon={ShoppingCart} href="/sales" loading={analyticsLoading} />
-          <KpiCard label="Gross profit" value={formatCurrency(grossProfit)} subtext={analytics?.summary?.sales?.grossMarginPct !== null && analytics?.summary?.sales?.grossMarginPct !== undefined ? `${analytics.summary.sales.grossMarginPct}% gross margin` : "Margin unavailable for this period"} change={analytics?.changes?.grossProfitPct} icon={TrendingUp} href="/reports" loading={analyticsLoading} />
-          <KpiCard label="Total purchases" value={formatCurrency(purchasesTotal)} subtext={analytics?.summary?.purchases?.count !== undefined ? `${analytics.summary.purchases.count} purchases · ${businessDateLabel}` : analyticsError ? "Period data unavailable" : "Selected period"} change={analytics?.changes?.purchasesPct} icon={Package} href="/purchases" loading={analyticsLoading} />
-          <KpiCard label="Cash & bank balance" value={formatCurrency(cashBank)} subtext={cashNow !== undefined && bankNow !== undefined ? `Cash ${formatCompactCurrency(cashNow)} · Bank ${formatCompactCurrency(bankNow)} · Digital ${formatCompactCurrency(dashboardData?.moneyPosition?.available?.digital)}` : "Current balances unavailable"} icon={Landmark} href="/cash" loading={dashboardLoading} />
-          <KpiCard label="Accounts receivable" value={formatCurrency(dashboardData?.receivables?.total)} subtext={dashboardData?.receivables?.overdue !== undefined ? `${formatCompactCurrency(dashboardData.receivables.overdue)} overdue · current balance` : "Current outstanding"} icon={ArrowDownRight} href="/receivables" loading={dashboardLoading} />
-          <KpiCard label="Accounts payable" value={formatCurrency(dashboardData?.payables?.total)} subtext={dashboardData?.payables?.overdue !== undefined ? `${formatCompactCurrency(dashboardData.payables.overdue)} overdue · current balance` : "Current outstanding"} icon={ArrowUpRight} href="/payables" loading={dashboardLoading} />
-          <KpiCard label="Inventory valuation" value={formatCurrency(dashboardData?.inventory?.totalValue)} subtext={dashboardData?.inventory?.totalBoxes !== undefined ? `${Number(dashboardData.inventory.totalBoxes).toLocaleString("en-IN")} boxes · ${dashboardData.inventory.lotCount || 0} active lots` : "Current stock value"} icon={Boxes} href="/inventory" loading={dashboardLoading} />
+          {canViewSales && <KpiCard label="Total sales" value={formatCurrency(salesTotal)} subtext={analytics?.summary?.sales?.count !== undefined ? `${analytics.summary.sales.count} sales · ${businessDateLabel}` : analyticsError ? "Period data unavailable" : "Selected period"} change={analytics?.changes?.salesPct} icon={ShoppingCart} href="/sales" loading={analyticsLoading} />}
+          {canViewSales && canViewReports && <KpiCard label="Gross profit" value={formatCurrency(grossProfit)} subtext={analytics?.summary?.sales?.grossMarginPct !== null && analytics?.summary?.sales?.grossMarginPct !== undefined ? `${analytics.summary.sales.grossMarginPct}% gross margin` : "Margin unavailable for this period"} change={analytics?.changes?.grossProfitPct} icon={TrendingUp} href="/reports" loading={analyticsLoading} />}
+          {canViewPurchases && <KpiCard label="Total purchases" value={formatCurrency(purchasesTotal)} subtext={analytics?.summary?.purchases?.count !== undefined ? `${analytics.summary.purchases.count} purchases · ${businessDateLabel}` : analyticsError ? "Period data unavailable" : "Selected period"} change={analytics?.changes?.purchasesPct} icon={Package} href="/purchases" loading={analyticsLoading} />}
+          {canViewAccounts && <KpiCard label="Cash & bank balance" value={formatCurrency(cashBank)} subtext={cashNow !== undefined && bankNow !== undefined ? `Cash ${formatCompactCurrency(cashNow)} · Bank ${formatCompactCurrency(bankNow)} · Digital ${formatCompactCurrency(dashboardData?.moneyPosition?.available?.digital)}` : "Current balances unavailable"} icon={Landmark} href="/cash" loading={dashboardLoading} />}
+          {canViewReceivables && <KpiCard label="Accounts receivable" value={formatCurrency(dashboardData?.receivables?.total)} subtext={dashboardData?.receivables?.overdue !== undefined ? `${formatCompactCurrency(dashboardData.receivables.overdue)} overdue · current balance` : "Current outstanding"} icon={ArrowDownRight} href="/receivables" loading={dashboardLoading} />}
+          {canViewPayables && <KpiCard label="Accounts payable" value={formatCurrency(dashboardData?.payables?.total)} subtext={dashboardData?.payables?.overdue !== undefined ? `${formatCompactCurrency(dashboardData.payables.overdue)} overdue · current balance` : "Current outstanding"} icon={ArrowUpRight} href="/payables" loading={dashboardLoading} />}
+          {canViewInventory && <KpiCard label="Inventory valuation" value={formatCurrency(dashboardData?.inventory?.totalValue)} subtext={dashboardData?.inventory?.totalBoxes !== undefined ? `${Number(dashboardData.inventory.totalBoxes).toLocaleString("en-IN")} boxes · ${dashboardData.inventory.lotCount || 0} active lots` : "Current stock value"} icon={Boxes} href="/inventory" loading={dashboardLoading} />}
         </div>
         {!analyticsLoading && analytics && !analytics.comparisonAvailable && (
           <p className="mt-2 text-[11px] text-neutral-500">No prior-period activity is recorded for a reliable percentage comparison yet; changes are omitted rather than estimated.</p>
@@ -851,8 +878,8 @@ export default function DashboardWorkspace() {
                     formatter={(value) => [formatCurrency(value, 2), ""]}
                   />
                   <Legend wrapperStyle={{ fontSize: 12, color: "#525252", paddingTop: 8 }} />
-                  <Line type="monotone" dataKey="sales" name="Sales" stroke="#166534" strokeWidth={2.2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-                  <Line type="monotone" dataKey="purchases" name="Purchases" stroke="#737373" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+                  {canViewSales && <Line type="monotone" dataKey="sales" name="Sales" stroke="#166534" strokeWidth={2.2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />}
+                  {canViewPurchases && <Line type="monotone" dataKey="purchases" name="Purchases" stroke="#737373" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />}
                 </LineChart>
               </ResponsiveContainer>
             </div>
