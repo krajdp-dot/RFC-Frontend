@@ -52,7 +52,7 @@ export default function FreshnessPage() {
     return (
       <div className="space-y-6 pb-10">
         <PageHeader title="Freshness Control" description="Monitor stock quality, plan markdowns and prevent waste." />
-        <div className="p-8 text-center text-destructive bg-card border rounded-xl">
+        <div className="p-8 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">
           <p>{error || "No data available."}</p>
           <button type="button" onClick={loadData} className="mt-3 underline">Try again</button>
         </div>
@@ -81,10 +81,10 @@ export default function FreshnessPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-card border rounded-xl overflow-hidden">
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
             <div className="p-4 border-b flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-destructive"></div>
-              <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">STOCK AT RISK</h3>
+              <h3 className="text-sm font-semibold tracking-tight text-foreground">STOCK AT RISK</h3>
             </div>
             
             {items.length === 0 ? (
@@ -93,7 +93,7 @@ export default function FreshnessPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b text-[13px] font-semibold uppercase tracking-wider text-muted-foreground text-left">
+                    <tr className="border-b text-sm font-semibold tracking-tight text-foreground text-left">
                       <th className="px-4 py-3">Product</th>
                       <th className="px-4 py-3 text-right">Qty</th>
                       <th className="px-4 py-3 text-right">Age</th>
@@ -130,8 +130,8 @@ export default function FreshnessPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-card border rounded-xl p-6 space-y-4">
-            <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">VALUE AT RISK</h3>
+          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 space-y-4">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground">VALUE AT RISK</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Current inventory value</span>
