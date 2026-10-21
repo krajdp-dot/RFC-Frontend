@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Can } from "@/components/auth/Can";
 import { useAuth } from "@/contexts/AuthContext";
 import { fetchApi } from "@/lib/fetchApi";
+import { QuickPick } from "@/components/shared/QuickPick";
 import { PERMISSIONS, ROLE_DESCRIPTIONS, ROLE_LABELS } from "@/lib/permissions";
 import { UserCog, Plus, ShieldCheck, Check } from "lucide-react";
 
@@ -137,7 +138,7 @@ export function TeamSection() {
   }
 
   return (
-    <section className="bg-card border rounded-xl overflow-hidden">
+    <section className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
       <div className="p-4 border-b flex justify-between items-center bg-muted/20">
         <div>
           <div className="flex items-center space-x-2">
@@ -198,19 +199,20 @@ export function TeamSection() {
                         <span className="text-sm font-medium">{ROLE_LABELS[member.role] ?? member.role}</span>
                       }
                     >
-                      <select
-                        className="flex h-8 rounded-md border border-input bg-background px-2 text-[13px] disabled:opacity-50"
+                      <QuickPick
                         value={member.role}
+                        onChange={(role) => changeRole(member, role)}
+                        options={ROLE_OPTIONS.map((role) => ({
+                          value: role,
+                          label: ROLE_LABELS[role] ?? role,
+                        }))}
+                        mode="segments"
+                        searchable={false}
+                        maxVisible={3}
                         disabled={busy || isSelf}
-                        title={isSelf ? "You can't change your own role" : undefined}
-                        onChange={(e) => changeRole(member, e.target.value)}
-                      >
-                        {ROLE_OPTIONS.map((role) => (
-                          <option key={role} value={role}>
-                            {ROLE_LABELS[role] ?? role}
-                          </option>
-                        ))}
-                      </select>
+                        className="min-w-0"
+                        optionClassName="min-h-8 px-2 py-1 text-xs"
+                      />
                     </Can>
 
                     <Can permission={PERMISSIONS.USERS_DISABLE}>
@@ -307,17 +309,19 @@ export function TeamSection() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Role</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.role}
-                onChange={(e) => setForm({ ...form, role: e.target.value })}
-              >
-                {ROLE_OPTIONS.map((role) => (
-                  <option key={role} value={role}>
-                    {ROLE_LABELS[role] ?? role}
-                  </option>
-                ))}
-              </select>
+                onChange={(role) => setForm({ ...form, role })}
+                options={ROLE_OPTIONS.map((role) => ({
+                  value: role,
+                  label: ROLE_LABELS[role] ?? role,
+                  detail: ROLE_DESCRIPTIONS[role],
+                }))}
+                mode="grid"
+                columns={3}
+                searchable={false}
+                maxVisible={3}
+              />
               <p className="text-xs text-muted-foreground mt-1">{ROLE_DESCRIPTIONS[form.role]}</p>
             </div>
             {formError && <p className="text-sm text-destructive">{formError}</p>}
