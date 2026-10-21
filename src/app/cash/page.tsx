@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { fetchApi } from "@/lib/fetchApi";
 import { PERMISSIONS } from "@/lib/permissions";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -142,36 +143,48 @@ export default function CashBanksPage() {
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Transfer Money</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleTransfer} className="flex flex-col gap-4">
+          <form onSubmit={handleTransfer} className="flex flex-col gap-5">
             <div>
               <label className="text-sm font-medium mb-1 block">From Account</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.fromAccountId}
-                onChange={(e) => setForm({ ...form, fromAccountId: e.target.value })}
-              >
-                <option value="">Select account</option>
-                {accounts.map((a: any) => (
-                  <option key={a.id} value={a.id}>{a.name} ({a.type}) — {formatCurrency(a.balance)}</option>
-                ))}
-              </select>
+                onChange={(fromAccountId) => setForm({ ...form, fromAccountId })}
+                options={accounts.map((account: any) => ({
+                  value: account.id,
+                  label: account.name,
+                  detail: account.type,
+                  meta: formatCurrency(account.balance),
+                  disabled: account.id === form.toAccountId,
+                  icon: account.type === "BANK" ? Landmark : account.type === "UPI" || account.type === "DIGITAL" ? Smartphone : Wallet,
+                }))}
+                mode="list"
+                maxVisible={5}
+                placeholder="Find source account…"
+                emptyText="No source accounts found."
+              />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">To Account</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.toAccountId}
-                onChange={(e) => setForm({ ...form, toAccountId: e.target.value })}
-              >
-                <option value="">Select account</option>
-                {accounts.map((a: any) => (
-                  <option key={a.id} value={a.id}>{a.name} ({a.type}) — {formatCurrency(a.balance)}</option>
-                ))}
-              </select>
+                onChange={(toAccountId) => setForm({ ...form, toAccountId })}
+                options={accounts.map((account: any) => ({
+                  value: account.id,
+                  label: account.name,
+                  detail: account.type,
+                  meta: formatCurrency(account.balance),
+                  disabled: account.id === form.fromAccountId,
+                  icon: account.type === "BANK" ? Landmark : account.type === "UPI" || account.type === "DIGITAL" ? Smartphone : Wallet,
+                }))}
+                mode="list"
+                maxVisible={5}
+                placeholder="Find destination account…"
+                emptyText="No destination accounts found."
+              />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
