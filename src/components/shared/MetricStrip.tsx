@@ -16,7 +16,7 @@ interface MetricStripProps {
 
 export function MetricStrip({ metrics, className }: MetricStripProps) {
   return (
-    <div className={cn("bg-card border rounded-xl p-1 flex flex-wrap", className)}>
+    <div className={cn("grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-3", className)}>
       {metrics.map((m, i) => {
         // Normalize trend: accept string like "↑ 12%" or structured object
         let trendDisplay: { text: string; positive: boolean } | null = null;
@@ -33,15 +33,14 @@ export function MetricStrip({ metrics, className }: MetricStripProps) {
           <div
             key={i}
             className={cn(
-              "flex-1 min-w-[140px] px-4 py-3 flex flex-col gap-0.5",
-              i > 0 && "border-l"
+              "min-w-0 rounded-2xl border border-border/80 bg-card p-4 shadow-[0_1px_2px_rgba(22,33,27,0.025)] transition hover:border-primary/20 hover:shadow-sm"
             )}
           >
-            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="mb-3 flex items-center justify-between gap-2"><span className="text-[11px] font-semibold text-muted-foreground">
               {m.label}
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold tracking-tight tabular-nums">{m.value}</span>
+            </span>{m.icon && <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/8 text-primary"><m.icon className="h-4 w-4" /></span>}</div>
+            <div className="flex flex-wrap items-baseline gap-2">
+              <span className="text-[25px] font-semibold leading-tight tracking-[-0.035em] tabular-nums">{m.value}</span>
               {trendDisplay && (
                 <span className={cn(
                   "text-[11px] font-medium",
@@ -52,7 +51,7 @@ export function MetricStrip({ metrics, className }: MetricStripProps) {
               )}
             </div>
             {m.subtext && (
-              <span className="text-[11px] text-muted-foreground">{m.subtext}</span>
+              <span className="mt-2 block text-xs text-muted-foreground">{m.subtext}</span>
             )}
           </div>
         );
