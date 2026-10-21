@@ -65,7 +65,7 @@ export default function AnalyticsPage() {
     return (
       <div className="space-y-6 pb-12">
         <PageHeader title="Business Analytics" description="Advanced insights into business performance." />
-        <div className="p-12 text-center text-destructive bg-card border rounded-xl">{error}</div>
+        <div className="p-12 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">{error}</div>
       </div>
     );
   }
@@ -147,8 +147,8 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {metrics.map((metric) => (
-          <div key={metric.name} className="bg-card border rounded-xl p-5 space-y-3">
-            <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">{metric.name}</h3>
+          <div key={metric.name} className="rounded-2xl border border-border/80 bg-card shadow-sm p-5 space-y-3">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground">{metric.name}</h3>
             <div className="flex items-baseline space-x-2">
               <span className="text-3xl font-bold tabular-nums">{metric.value}</span>
               {metric.trend === "up" && <ArrowUpRight className="h-5 w-5 text-emerald-500" />}
@@ -160,9 +160,9 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      <section className="bg-card border rounded-xl overflow-hidden mt-6">
+      <section className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden mt-6">
         <div className="p-5 border-b">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Fruit Intelligence</h2>
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">Fruit Intelligence</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b last:border-b-0 flex-wrap">
           {fruitIntel.map((intel, idx) => (
