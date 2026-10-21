@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -195,7 +196,7 @@ export default function BulkLotSalePage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-6 p-6 w-full max-w-5xl mx-auto">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
         <div className="p-8 text-center text-muted-foreground">Loading...</div>
       </div>
     );
@@ -239,19 +240,22 @@ export default function BulkLotSalePage() {
               <label className="text-sm font-medium text-muted-foreground">
                 Lot *
               </label>
-              <select
+              <QuickPick
                 value={lotId}
-                onChange={(e) => setLotId(e.target.value)}
-                className="h-9 rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                <option value="">Select lot...</option>
-                {lots.map((l: any) => (
-                  <option key={l.id} value={l.id}>
-                    {l.lotReference} — {l.productName} — {l.remainingBoxes}{" "}
-                    boxes @ {formatCurrency(l.costPerBox)}/box
-                  </option>
-                ))}
-              </select>
+                onChange={setLotId}
+                options={lots.map((lot: any) => ({
+                  value: lot.id,
+                  label: lot.lotReference,
+                  detail: `${lot.productName} · ${lot.remainingBoxes} boxes available`,
+                  meta: `${formatCurrency(lot.costPerBox)}/box`,
+                  icon: Package,
+                }))}
+                mode="grid"
+                columns={2}
+                maxVisible={4}
+                placeholder="Search lot / fruit…"
+                emptyText="No saleable lots found."
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-muted-foreground">
@@ -338,20 +342,18 @@ export default function BulkLotSalePage() {
                     <label className="text-xs text-muted-foreground">
                       Customer
                     </label>
-                    <select
+                    <QuickPick
                       value={alloc.customerId}
-                      onChange={(e) =>
-                        updateAllocation(index, "customerId", e.target.value)
-                      }
-                      className="h-8 rounded-md border bg-background px-2 text-sm"
-                    >
-                      <option value="">Select...</option>
-                      {customers.map((c: any) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(customerId) => updateAllocation(index, "customerId", customerId)}
+                      options={[
+                        { value: "", label: "Choose customer" },
+                        ...customers.map((customer: any) => ({ value: customer.id, label: customer.name, detail: customer.businessName || customer.phone || undefined })),
+                      ]}
+                      mode="segments"
+                      maxVisible={4}
+                      placeholder="Search buyer…"
+                      emptyText="No buyers found."
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <label className="text-xs text-muted-foreground">
@@ -423,42 +425,31 @@ export default function BulkLotSalePage() {
                     <label className="text-xs text-muted-foreground">
                       Method
                     </label>
-                    <select
+                    <QuickPick
                       value={alloc.paymentMethod}
-                      onChange={(e) =>
-                        updateAllocation(index, "paymentMethod", e.target.value)
-                      }
-                      className="h-8 rounded-md border bg-background px-2 text-sm"
-                    >
-                      {PAYMENT_METHODS.map((m) => (
-                        <option key={m.value} value={m.value}>
-                          {m.label}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(paymentMethod) => updateAllocation(index, "paymentMethod", paymentMethod)}
+                      options={PAYMENT_METHODS.map((method) => ({ value: method.value, label: method.label }))}
+                      mode="segments"
+                      searchable={false}
+                      maxVisible={4}
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <label className="text-xs text-muted-foreground">
                       Account
                     </label>
-                    <select
+                    <QuickPick
                       value={alloc.paymentAccountId}
-                      onChange={(e) =>
-                        updateAllocation(
-                          index,
-                          "paymentAccountId",
-                          e.target.value
-                        )
-                      }
-                      className="h-8 rounded-md border bg-background px-2 text-sm"
-                    >
-                      <option value="">None</option>
-                      {accounts.map((a: any) => (
-                        <option key={a.id} value={a.id}>
-                          {a.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(paymentAccountId) => updateAllocation(index, "paymentAccountId", paymentAccountId)}
+                      options={[
+                        { value: "", label: "None / credit" },
+                        ...accounts.map((account: any) => ({ value: account.id, label: account.name, detail: account.type || undefined })),
+                      ]}
+                      mode="segments"
+                      maxVisible={4}
+                      placeholder="Search account…"
+                      emptyText="No accounts found."
+                    />
                   </div>
                 </div>
 
