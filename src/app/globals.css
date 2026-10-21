@@ -146,3 +146,62 @@
     @apply font-sans;
   }
 }
+
+@layer base {
+  ::selection {
+    background: color-mix(in oklab, var(--primary), white 78%);
+    color: var(--foreground);
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead th {
+    letter-spacing: -0.01em;
+    font-weight: 650;
+  }
+
+  tbody tr {
+    transition: background-color 150ms ease;
+  }
+
+  input,
+  select,
+  textarea {
+    accent-color: var(--primary);
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground), transparent 65%) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--muted-foreground), transparent 72%);
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--muted-foreground), transparent 55%);
+    background-clip: padding-box;
+  }
+}
