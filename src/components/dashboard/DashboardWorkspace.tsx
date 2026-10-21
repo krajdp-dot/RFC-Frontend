@@ -11,7 +11,6 @@ import {
   ArrowUpRight,
   Bell,
   Boxes,
-  BriefcaseBusiness,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
