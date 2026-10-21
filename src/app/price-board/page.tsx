@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { fetchApi } from "@/lib/fetchApi";
 import { PERMISSIONS } from "@/lib/permissions";
+import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -95,22 +96,27 @@ export default function PriceBoardPage() {
       />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Update Market Price</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="text-sm font-medium mb-1 block">Product</label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              <QuickPick
                 value={form.productId}
-                onChange={(e) => setForm({ ...form, productId: e.target.value })}
-              >
-                {board.map((item: any) => (
-                  <option key={item.productId} value={item.productId}>{item.productName}</option>
-                ))}
-              </select>
+                onChange={(productId) => setForm({ ...form, productId })}
+                options={board.map((item: any) => ({
+                  value: item.productId,
+                  label: item.productName,
+                  detail: `Suggested ${formatCurrency(item.recommendedPrice)} / ${item.unit?.toLowerCase() || "kg"}`,
+                }))}
+                mode="grid"
+                columns={2}
+                maxVisible={6}
+                placeholder="Search fruit…"
+                emptyText="No products on the price board."
+              />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Market Price</label>
@@ -148,11 +154,11 @@ export default function PriceBoardPage() {
         <>
           <p className="text-sm text-muted-foreground">Automated Pricing Intelligence</p>
 
-          <div className="bg-card border rounded-xl overflow-hidden p-6 space-y-4 mb-6">
+          <div className="mb-6 space-y-5 overflow-hidden rounded-2xl border border-border/80 bg-card p-5 shadow-sm sm:p-6">
             <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">TODAY'S RECOMMENDED PRICES</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {topItems.map((item: any) => (
-                <div key={item.productId} className="border rounded-lg p-5 space-y-4">
+                <div key={item.productId} className="rounded-2xl border border-border/80 bg-background p-5 space-y-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="flex justify-between items-start">
                     <h4 className="font-semibold text-lg">{item.productName}</h4>
                     <span className="text-xl font-bold tabular-nums text-primary">
@@ -182,7 +188,7 @@ export default function PriceBoardPage() {
             <p className="text-xs text-muted-foreground italic mt-2">Recommendations based on recent costs, market rates, and rules</p>
           </div>
 
-          <div className="bg-card border rounded-xl overflow-hidden">
+          <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
