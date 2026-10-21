@@ -199,6 +199,7 @@ function getTransactionTone(transaction: Transaction) {
 
 function getAlertHref(alert: any) {
   if (alert?.href) return alert.href;
+  if (alert?.type === "DAY_CLOSE_PENDING") return "/day-close";
   if (alert?.type === "OVERDUE_RECEIVABLE") return "/receivables";
   if (alert?.type === "OVERDUE_PAYABLE") return "/payables";
   if (alert?.type === "LOW_STOCK") return "/inventory";
@@ -309,6 +310,7 @@ export default function DashboardWorkspace() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
+  const [dayCloseStatus, setDayCloseStatus] = useState<{ alreadyClosed: boolean } | null>(null);
 
   const [transactionSearch, setTransactionSearch] = useState("");
   const [transactionFilter, setTransactionFilter] = useState("ALL");
@@ -334,6 +336,7 @@ export default function DashboardWorkspace() {
   const canReceivePayments = can(PERMISSIONS.PAYMENTS_RECEIVE);
   const canMakePayments = can(PERMISSIONS.PAYMENTS_MAKE);
   const canViewSettings = can(PERMISSIONS.BUSINESS_VIEW);
+  const canPreviewDayClose = can(PERMISSIONS.DAY_CLOSE_PREVIEW);
 
   const loadToday = useCallback(async () => {
     setDashboardLoading(true);
@@ -383,6 +386,28 @@ export default function DashboardWorkspace() {
       cancelled = true;
     };
   }, [startDate, endDate, refreshCount]);
+
+  useEffect(() => {
+    if (!canPreviewDayClose) {
+      setDayCloseStatus(null);
+      return;
+    }
+    let cancelled = false;
+    async function loadDayCloseStatus() {
+      try {
+        const date = businessDateString();
+        const response = await fetchApi(`/day-close/${date}/preview`);
+        if (!cancelled) setDayCloseStatus({ alreadyClosed: Boolean(response?.alreadyClosed) });
+      } catch {
+        // A status we cannot verify is not rendered as an alert.
+        if (!cancelled) setDayCloseStatus(null);
+      }
+    }
+    loadDayCloseStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [canPreviewDayClose, refreshCount]);
 
   useEffect(() => {
     const query = globalSearch.trim();
@@ -524,13 +549,21 @@ export default function DashboardWorkspace() {
   const cashNow = dashboardData?.moneyPosition?.available?.cash;
   const bankNow = dashboardData?.moneyPosition?.available?.bank;
   const cashBank = cashNow === undefined || bankNow === undefined ? null : Number(cashNow) + Number(bankNow);
-  const alerts: any[] = (dashboardData?.alerts || []).filter((alert: any) => {
-    if (alert.type === "OVERDUE_RECEIVABLE") return canViewReceivables;
-    if (alert.type === "OVERDUE_PAYABLE") return canViewPayables;
-    if (alert.type === "LOW_STOCK" || alert.type === "STOCK_AT_RISK") return canViewInventory;
-    if (alert.type === "RECONCILIATION_WARNING") return can(PERMISSIONS.RECONCILIATION_VIEW) || canViewReports;
-    return can(PERMISSIONS.DASHBOARD_VIEW);
-  });
+  const alerts: any[] = [
+    ...(dashboardData?.alerts || []).filter((alert: any) => {
+      if (alert.type === "OVERDUE_RECEIVABLE") return canViewReceivables;
+      if (alert.type === "OVERDUE_PAYABLE") return canViewPayables;
+      if (alert.type === "LOW_STOCK" || alert.type === "STOCK_AT_RISK") return canViewInventory;
+      if (alert.type === "RECONCILIATION_WARNING") return can(PERMISSIONS.RECONCILIATION_VIEW) || canViewReports;
+      return can(PERMISSIONS.DASHBOARD_VIEW);
+    }),
+    ...(canPreviewDayClose && dayCloseStatus && !dayCloseStatus.alreadyClosed ? [{
+      type: "DAY_CLOSE_PENDING",
+      severity: "MEDIUM",
+      message: "Today’s day close has not been committed yet.",
+      action: "Review close",
+    }] : []),
+  ];
   const criticalAlerts = alerts.filter((alert) => alert.severity === "HIGH").length;
   const chartHasActivity = (analytics?.trend || []).some((point: any) =>
     (canViewSales && Number(point.sales) !== 0) || (canViewPurchases && Number(point.purchases) !== 0)
