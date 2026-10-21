@@ -29,7 +29,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const blocked = !loading && required !== undefined && !can(required);
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className={cn("min-h-screen flex", pathname === "/" ? "bg-white" : "bg-background")}>
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
@@ -43,7 +43,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
       >
         <Header />
-        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8">
+        <main className=cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8", pathname === "/" && "bg-white")>
           {blocked ? <NoAccess role={role} /> : children}
         </main>
       </div>
