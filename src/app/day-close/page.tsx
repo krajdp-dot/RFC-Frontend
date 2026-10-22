@@ -8,6 +8,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { AlertTriangle, Lock } from "lucide-react";
 import { fetchApi } from "@/lib/fetchApi";
+import { todayBusinessDate } from "@/lib/businessDate";
 
 function formatCurrency(amount: string | number | null | undefined) {
   if (amount === undefined || amount === null) return "—";
@@ -18,7 +19,7 @@ function formatCurrency(amount: string | number | null | undefined) {
 }
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  return todayBusinessDate();
 }
 
 export default function DayClosePage() {
