@@ -1,5 +1,7 @@
 "use client";
 
+import { NumberInput } from "@/components/ui/number-input";
+
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
@@ -468,8 +470,7 @@ export default function CustomersPage() {
                   Credit Limit
                 </label>
 
-                <input
-                  type="number"
+                <NumberInput
                   min="0"
                   value={form.creditLimit}
                   onChange={(event) =>
@@ -485,8 +486,7 @@ export default function CustomersPage() {
                   Credit Terms
                 </label>
 
-                <input
-                  type="number"
+                <NumberInput
                   min="0"
                   value={form.creditTermsDays}
                   onChange={(event) =>
