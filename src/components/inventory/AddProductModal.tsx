@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { NumberInput } from '@/components/ui/number-input';
 import { fetchApi } from '@/lib/fetchApi';
 import { QuickPick } from '@/components/shared/QuickPick';
 
@@ -119,10 +120,7 @@ export function AddProductModal({ onClose, onSuccess }: AddProductModalProps) {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Default Box Weight (Kg)</label>
-                <input 
-                  type="number" 
-                  step="0.01"
-                  min="0"
+                <NumberInput step="0.01" min="0"
                   value={defaultBoxWeightKg}
                   onChange={e => setDefaultBoxWeightKg(e.target.value)}
                   placeholder="e.g. 20"
@@ -133,9 +131,7 @@ export function AddProductModal({ onClose, onSuccess }: AddProductModalProps) {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Shelf Life (Days)</label>
-              <input 
-                type="number" 
-                min="0"
+              <NumberInput min="0"
                 value={shelfLifeDays}
                 onChange={e => setShelfLifeDays(e.target.value)}
                 placeholder="e.g. 15"
