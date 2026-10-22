@@ -52,7 +52,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             className="absolute inset-0 bg-black/25"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 z-10 w-[256px]">
+          <div className="absolute inset-y-0 left-0 z-10 w-[240px]">
             <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
           </div>
         </div>
