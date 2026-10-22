@@ -87,7 +87,7 @@ export default function SalesPage() {
 
       <OfflineQueueNotice operation="sale.create" label="sale" />
       
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden flex flex-col">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
           <h2 className="text-sm font-semibold tracking-tight text-foreground">Recent Sales</h2>
           <div className="flex items-center gap-2">
