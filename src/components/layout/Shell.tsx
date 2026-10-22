@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { CommandMenu } from "./CommandMenu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { NoAccess } from "@/components/auth/Can";
@@ -12,12 +13,20 @@ import { permissionForRoute } from "@/lib/permissions";
 export function Shell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const pathname = usePathname();
   const { can, loading, role } = useAuth();
 
   useEffect(() => {
     setMobileOpen(false);
+    setCommandOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const openCommandMenu = () => setCommandOpen(true);
+    window.addEventListener("rfc:open-command-menu", openCommandMenu);
+    return () => window.removeEventListener("rfc:open-command-menu", openCommandMenu);
+  }, []);
 
   const isAuthRoute = pathname === '/login' || pathname === '/register';
 
@@ -61,10 +70,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
           collapsed ? "md:pl-[64px]" : "md:pl-[240px]"
         )}
       >
-        <Header mobileMenuOpen={mobileOpen} onMobileMenuToggle={() => setMobileOpen((open) => !open)} />
+        <Header mobileMenuOpen={mobileOpen} onMobileMenuToggle={() => setMobileOpen((open) => !open)} onCommandMenuOpen={() => setCommandOpen(true)} />
         <main className={cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-5 xl:p-6", pathname === "/" && "bg-white")}>
           {blocked ? <NoAccess role={role} /> : children}
         </main>
+        <CommandMenu open={commandOpen} onClose={() => setCommandOpen(false)} />
       </div>
     </div>
   );
