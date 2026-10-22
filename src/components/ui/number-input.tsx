@@ -67,8 +67,9 @@ function rangeMessage(
     return `Enter ${maxValue} or less.`;
   }
 
-  if (step !== undefined && step !== "" && step !== "any") {
-    const increment = Number(step);
+  const effectiveStep = step === undefined || step === "" ? 1 : step;
+  if (effectiveStep !== "any") {
+    const increment = Number(effectiveStep);
     if (Number.isFinite(increment) && increment > 0) {
       const base = minValue !== undefined && Number.isFinite(minValue) ? minValue : 0;
       const units = (value - base) / increment;
@@ -140,7 +141,7 @@ export function NumberInput({
   };
 
   const mode = inputMode ?? (
-    step !== undefined && Number(step) === 1 ? "numeric" : "decimal"
+    (step === undefined || Number(step) === 1) ? "numeric" : "decimal"
   );
 
   return (
