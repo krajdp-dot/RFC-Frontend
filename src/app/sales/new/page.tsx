@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   ArrowLeft,
   Banknote,
@@ -810,8 +811,7 @@ export default function NewSalePage() {
                             >
                               <Minus className="h-3.5 w-3.5" />
                             </button>
-                            <Input
-                              type="number"
+                            <NumberInput
                               min="1"
                               max={product?.remainingBoxes}
                               required
@@ -834,8 +834,7 @@ export default function NewSalePage() {
 
                         <div className="flex flex-col gap-1">
                           <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Rate / box (₹)</label>
-                          <Input
-                            type="number"
+                          <NumberInput
                             min="0"
                             step="0.01"
                             required
@@ -879,8 +878,7 @@ export default function NewSalePage() {
                 <span className="text-sm text-muted-foreground">Discount (optional)</span>
                 <div className="flex items-center gap-2 sm:w-48">
                   <span className="text-sm text-muted-foreground">₹</span>
-                  <Input
-                    type="number"
+                  <NumberInput
                     min="0"
                     step="0.01"
                     aria-label="Discount amount"
@@ -981,8 +979,7 @@ export default function NewSalePage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground">₹</span>
-                            <Input
-                              type="number"
+                            <NumberInput
                               min="0"
                               step="0.01"
                               aria-label={`Amount received to ${account?.name ?? "account"}`}
