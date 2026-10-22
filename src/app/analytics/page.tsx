@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="space-y-5 pb-12">
+      <div className="space-y-5 pb-8">
         <PageHeader title="Business Analytics" description="Advanced insights into business performance." />
         <div className="p-12 text-center text-muted-foreground">Loading analytics data...</div>
       </div>
