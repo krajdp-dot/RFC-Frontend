@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { AlertTriangle, Lock } from "lucide-react";
 import { fetchApi } from "@/lib/fetchApi";
@@ -216,8 +217,7 @@ export default function DayClosePage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1 block">Physical Cash Counted</label>
-                <Input
-                  type="number"
+                <NumberInput
                   min="0"
                   step="0.01"
                   placeholder="Optional"
