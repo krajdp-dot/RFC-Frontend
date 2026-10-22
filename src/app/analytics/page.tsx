@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 pb-12">
+      <div className="space-y-5 pb-12">
         <PageHeader title="Business Analytics" description="Advanced insights into business performance." />
         <div className="p-12 text-center text-muted-foreground">Loading analytics data...</div>
       </div>
@@ -63,9 +63,9 @@ export default function AnalyticsPage() {
 
   if (error) {
     return (
-      <div className="space-y-6 pb-12">
+      <div className="space-y-5 pb-12">
         <PageHeader title="Business Analytics" description="Advanced insights into business performance." />
-        <div className="p-12 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">{error}</div>
+        <div className="p-12 text-center text-destructive rounded-xl border border-border bg-white shadow-sm">{error}</div>
       </div>
     );
   }
@@ -128,7 +128,7 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-5 pb-12">
       <PageHeader
         title="Business Analytics"
         description="Advanced insights into business performance."
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {metrics.map((metric) => (
-          <div key={metric.name} className="rounded-2xl border border-border/80 bg-card shadow-sm p-5 space-y-3">
+          <div key={metric.name} className="rounded-xl border border-border bg-white shadow-sm p-5 space-y-3">
             <h3 className="text-sm font-semibold tracking-tight text-foreground">{metric.name}</h3>
             <div className="flex items-baseline space-x-2">
               <span className="text-3xl font-bold tabular-nums">{metric.value}</span>
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      <section className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden mt-6">
+      <section className="rounded-xl border border-border bg-white shadow-sm overflow-hidden mt-6">
         <div className="p-5 border-b">
           <h2 className="text-sm font-semibold tracking-tight text-foreground">Fruit Intelligence</h2>
         </div>
