@@ -239,7 +239,7 @@ export default function NewPurchasePage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-4 px-1 pb-8">
       <PageHeader
         title="New Purchase"
         subtitle="Record an incoming purchase from a supplier."
