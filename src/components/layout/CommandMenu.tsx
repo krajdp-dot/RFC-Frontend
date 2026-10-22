@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowDownLeft, ArrowLeftRight, ArrowUpRight, BarChart3, Boxes, CalendarCheck,
-  Command, FileText, LayoutDashboard, Package, PackagePlus, Receipt, Search,
+  FileText, LayoutDashboard, Package, PackagePlus, Receipt, Search,
   Settings, ShoppingCart, Tag, Thermometer, Truck, Users, Wallet, Radar, X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
