@@ -95,7 +95,7 @@ export default function SalesReturnsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-3xl mx-auto pb-16">
+    <div className="flex flex-col gap-4 p-5 w-full max-w-3xl mx-auto pb-10">
       <PageHeader
         title="Sales Returns"
         subtitle="Process a customer return against an existing sale."
