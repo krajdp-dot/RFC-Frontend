@@ -124,14 +124,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-20 flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-[8px_0_32px_rgba(12,28,18,0.04)] transition-all duration-200",
-        collapsed ? "w-[72px]" : "w-[256px]"
+        "fixed inset-y-0 left-0 z-20 flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width,background-color] duration-200",
+        collapsed ? "w-[64px]" : "w-[240px]"
       )}
     >
       {/* Brand */}
-      <div className="flex h-14 items-center justify-center shrink-0 px-4 border-b border-sidebar-border">
+      <div className="flex h-[60px] items-center justify-center shrink-0 border-b border-sidebar-border px-4">
         <div className={cn("flex items-center w-full", collapsed ? "justify-center" : "justify-start gap-3")}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground shrink-0">
             <Diamond className="h-5 w-5" />
           </div>
           {!collapsed && (
@@ -144,11 +144,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* Nav */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-5 flex flex-col gap-5 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 py-4 flex flex-col gap-4 custom-scrollbar">
         {visibleGroups.map((group, i) => (
           <div key={i} className="flex flex-col gap-1.5">
             {!collapsed && (
-              <div className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sidebar-foreground/45">
+              <div className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-foreground/45">
                 {group.label}
               </div>
             )}
@@ -159,16 +159,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   key={j}
                   href={item.href}
                   className={cn(
-                    "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-150",
+                    "group relative flex min-h-9 items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors duration-150",
                     isActive 
-                      ? "bg-sidebar-accent text-sidebar-primary shadow-sm" 
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground" 
                       : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground",
                     collapsed && "mx-auto h-10 w-10 justify-center px-0"
                   )}
                   title={collapsed ? item.name : undefined}
                 >
                   {isActive && (
-                    <div className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-sidebar-primary" />
+                    <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-sidebar-primary" />
                   )}
                   <item.icon className="h-[18px] w-[18px] shrink-0" />
                   {!collapsed && <span>{item.name}</span>}
@@ -184,7 +184,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <Button
           variant="ghost"
           onClick={onToggle}
-          className="w-full rounded-none h-10 hover:bg-sidebar-accent text-sidebar-foreground/50 hover:text-sidebar-foreground border-b border-sidebar-border"
+          className="w-full rounded-none h-9 hover:bg-sidebar-accent text-sidebar-foreground/50 hover:text-sidebar-foreground border-b border-sidebar-border"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
@@ -193,7 +193,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             "flex items-center gap-3 rounded-md",
             collapsed ? "justify-center" : "px-2 py-1.5 hover:bg-sidebar-accent transition-colors cursor-pointer"
           )}>
-            <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm shrink-0 border border-primary/20">
+            <div className="h-8 w-8 rounded-full bg-sidebar-accent text-sidebar-accent-foreground flex items-center justify-center font-semibold text-xs shrink-0 border border-sidebar-border">
               {initialsFor(user?.name)}
             </div>
             {!collapsed && (

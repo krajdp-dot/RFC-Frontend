@@ -88,7 +88,7 @@ export default function PriceBoardPage() {
   const topItems = board.slice(0, 3);
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-5 pb-10">
       <PageHeader
         title="Price Board"
         description="Daily reference for fruit pricing and margins."
@@ -154,7 +154,7 @@ export default function PriceBoardPage() {
         <>
           <p className="text-sm text-muted-foreground">Automated Pricing Intelligence</p>
 
-          <div className="mb-6 space-y-5 overflow-hidden rounded-2xl border border-border/80 bg-card p-5 shadow-sm sm:p-6">
+          <div className="mb-6 space-y-5 overflow-hidden rounded-xl border border-border bg-white p-5 shadow-sm sm:p-6">
             <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">TODAY'S RECOMMENDED PRICES</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {topItems.map((item: any) => (
@@ -188,7 +188,7 @@ export default function PriceBoardPage() {
             <p className="text-xs text-muted-foreground italic mt-2">Recommendations based on recent costs, market rates, and rules</p>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
+          <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

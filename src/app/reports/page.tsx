@@ -66,7 +66,7 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title="Reports"
         description="Business intelligence and analytics."
@@ -83,7 +83,7 @@ export default function ReportsPage() {
                 <div
                   key={report.title}
                   onClick={report.href ? () => router.push(report.href) : undefined}
-                  className={`rounded-2xl border border-border/80 bg-card shadow-sm p-4 transition flex flex-col space-y-2 group ${
+                  className={`rounded-xl border border-border bg-white shadow-sm p-4 transition flex flex-col space-y-2 group ${
                     report.href ? "hover:bg-muted/30 cursor-pointer" : "opacity-60"
                   }`}
                 >

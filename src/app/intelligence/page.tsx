@@ -73,7 +73,7 @@ function SignalGroup({
   const style = TIER_STYLE[tier];
   const { Icon } = style;
   return (
-    <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
       <div className="p-4 border-b flex items-center gap-2">
         {signals.length > 0 && (
           <span className={cn("w-2 h-2 rounded-full shrink-0", style.dot, style.pulse && "animate-pulse")} />
@@ -133,7 +133,7 @@ function TrendTile({
   return (
     <Link
       href={href}
-      className="rounded-2xl border border-border/80 bg-card shadow-sm p-4 flex flex-col gap-1 hover:bg-muted/30 transition-colors min-w-0"
+      className="rounded-xl border border-border bg-white shadow-sm p-4 flex flex-col gap-1 hover:bg-muted/30 transition-colors min-w-0"
     >
       <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
       <div className="flex items-baseline gap-2 flex-wrap">
@@ -178,7 +178,7 @@ export default function IntelligencePage() {
 
   if (loading && !brief) {
     return (
-      <div className="space-y-6 pb-12">
+      <div className="space-y-5 pb-12">
         <PageHeader title="Intelligence" subtitle="Your morning briefing across the whole business." />
         <div className="p-12 text-center text-muted-foreground">Reading the ledger…</div>
       </div>
@@ -187,9 +187,9 @@ export default function IntelligencePage() {
 
   if (error && !brief) {
     return (
-      <div className="space-y-6 pb-12">
+      <div className="space-y-5 pb-12">
         <PageHeader title="Intelligence" subtitle="Your morning briefing across the whole business." />
-        <div className="p-12 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">{error}</div>
+        <div className="p-12 text-center text-destructive rounded-xl border border-border bg-white shadow-sm">{error}</div>
       </div>
     );
   }
@@ -221,7 +221,7 @@ export default function IntelligencePage() {
     : { text: `${expenses.changePct > 0 ? "+" : ""}${expenses.changePct.toFixed(1)}%`, positive: expenses.changePct <= 0 };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-5 pb-12">
       <PageHeader
         title="Intelligence"
         subtitle={`Your morning briefing across the whole business · updated ${generatedTime}`}

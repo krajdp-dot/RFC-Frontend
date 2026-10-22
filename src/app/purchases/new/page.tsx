@@ -239,7 +239,7 @@ export default function NewPurchasePage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-4 px-1 pb-8">
       <PageHeader
         title="New Purchase"
         subtitle="Record an incoming purchase from a supplier."
@@ -263,7 +263,7 @@ export default function NewPurchasePage() {
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm flex flex-col gap-4">
+        <div className="rounded-xl border border-border bg-white p-5 shadow-sm flex flex-col gap-4">
           <h2 className="font-semibold text-lg">General Info</h2>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(240px,1fr)]">

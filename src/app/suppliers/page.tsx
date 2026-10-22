@@ -140,7 +140,7 @@ export default function SuppliersPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title="Suppliers"
         subtitle="Manage supplier relationships and purchases."
@@ -157,8 +157,8 @@ export default function SuppliersPage() {
 
       <MetricStrip metrics={metrics} />
 
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b flex items-center justify-between gap-4">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
+        <div className="px-4 py-3 border-b flex items-center justify-between gap-4">
           <h2 className="text-sm font-semibold tracking-tight text-foreground">
             Supplier List
           </h2>
@@ -167,7 +167,7 @@ export default function SuppliersPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search suppliers..."
-            className="h-9 w-64 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="h-9 w-64 rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15 outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
@@ -203,10 +203,10 @@ export default function SuppliersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50 text-muted-foreground">
-                  <th className="px-6 py-3 text-left font-medium">Supplier</th>
-                  <th className="px-6 py-3 text-left font-medium">Phone</th>
-                  <th className="px-6 py-3 text-left font-medium">Business</th>
-                  <th className="px-6 py-3 text-left font-medium">Status</th>
+                  <th className="px-4 py-3 text-left font-medium">Supplier</th>
+                  <th className="px-4 py-3 text-left font-medium">Phone</th>
+                  <th className="px-4 py-3 text-left font-medium">Business</th>
+                  <th className="px-4 py-3 text-left font-medium">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -216,10 +216,10 @@ export default function SuppliersPage() {
                     onClick={() => router.push(`/suppliers/${supplier.id}`)}
                     className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors"
                   >
-                    <td className="px-6 py-4 font-medium">{supplier.name}</td>
-                    <td className="px-6 py-4">{supplier.phone || "—"}</td>
-                    <td className="px-6 py-4">{supplier.businessName || "—"}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3 font-medium">{supplier.name}</td>
+                    <td className="px-4 py-3">{supplier.phone || "—"}</td>
+                    <td className="px-4 py-3">{supplier.businessName || "—"}</td>
+                    <td className="px-4 py-3">
                       <StatusBadge
                         label={supplier.active === false ? "Inactive" : "Active"}
                         variant={supplier.active === false ? "error" : "success"}
@@ -244,8 +244,8 @@ export default function SuppliersPage() {
             if (event.target === event.currentTarget) setShowAddDialog(false);
           }}
         >
-          <div className="w-full max-w-2xl rounded-xl border bg-background shadow-xl">
-            <div className="flex items-center justify-between border-b px-6 py-4">
+          <div className="w-full max-w-2xl rounded-xl border border-border bg-white shadow-[0_18px_60px_rgba(10,20,14,0.16)]">
+            <div className="flex items-center justify-between border-b px-4 py-3">
               <div>
                 <h2 className="text-lg font-semibold">Add Supplier</h2>
                 <p className="text-sm text-muted-foreground">Create a new supplier account.</p>
@@ -266,7 +266,7 @@ export default function SuppliersPage() {
                   value={form.name}
                   onChange={(event) => updateForm("name", event.target.value)}
                   placeholder="Suresh Kumar"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
               <div>
@@ -275,7 +275,7 @@ export default function SuppliersPage() {
                   value={form.phone}
                   onChange={(event) => updateForm("phone", event.target.value)}
                   placeholder="+919876543211"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
               <div>
@@ -284,7 +284,7 @@ export default function SuppliersPage() {
                   value={form.businessName}
                   onChange={(event) => updateForm("businessName", event.target.value)}
                   placeholder="Suresh Farms"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
               <div>
@@ -295,7 +295,7 @@ export default function SuppliersPage() {
                   value={form.paymentTermsDays}
                   onChange={(event) => updateForm("paymentTermsDays", event.target.value)}
                   placeholder="30"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
               <div>
@@ -304,7 +304,7 @@ export default function SuppliersPage() {
                   value={form.address}
                   onChange={(event) => updateForm("address", event.target.value)}
                   placeholder="456 Farm Road"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -319,7 +319,7 @@ export default function SuppliersPage() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 border-t px-6 py-4">
+            <div className="flex justify-end gap-3 border-t px-4 py-3">
               <button
                 type="button"
                 onClick={() => setShowAddDialog(false)}

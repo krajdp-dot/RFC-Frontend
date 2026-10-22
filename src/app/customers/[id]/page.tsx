@@ -65,8 +65,8 @@ export default function CustomerProfilePage() {
   const creditLimit = customer.creditLimit || 0;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 rounded-2xl border border-border/80 bg-card shadow-sm p-6">
+    <div className="space-y-5 max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 rounded-xl border border-border bg-white shadow-sm p-6">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight mb-2">{customer.name}</h1>
           {customer.businessName && <p className="text-muted-foreground mb-4">{customer.businessName}</p>}
@@ -82,20 +82,20 @@ export default function CustomerProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-5">
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
+            <div className="rounded-xl border border-border bg-white shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Credit Limit</p>
               <p className="text-xl font-semibold tabular-nums">{formatCurrency(creditLimit)}</p>
             </div>
-            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
+            <div className="rounded-xl border border-border bg-white shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Credit Terms</p>
               <p className="text-xl font-semibold tabular-nums">{customer.creditTermsDays || 0} days</p>
             </div>
           </div>
           
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b">
+          <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b">
               <h2 className="text-sm font-semibold tracking-tight text-foreground">Recent Transactions</h2>
             </div>
             {ledgerError && (
@@ -119,17 +119,17 @@ export default function CustomerProfilePage() {
                 <tbody className="divide-y">
                   {ledger.map((entry: any) => (
                     <tr key={`${entry.type}-${entry.id}`}>
-                      <td className="px-6 py-3 whitespace-nowrap text-muted-foreground">
+                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                         {new Date(entry.date).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-4 py-3">
                         <StatusBadge
                           label={entry.type}
                           variant={entry.type === "SALE" ? "warning" : "success"}
                         />
                       </td>
-                      <td className="px-6 py-3 text-muted-foreground">{entry.reference || "—"}</td>
-                      <td className="px-6 py-3 text-right font-medium tabular-nums">
+                      <td className="px-4 py-3 text-muted-foreground">{entry.reference || "—"}</td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums">
                         {formatCurrency(entry.amount)}
                       </td>
                     </tr>
@@ -140,8 +140,8 @@ export default function CustomerProfilePage() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6">
+        <div className="space-y-5">
+          <div className="rounded-xl border border-border bg-white shadow-sm p-6">
             <h2 className="text-sm font-semibold tracking-tight text-foreground mb-4">Contact Information</h2>
             <div className="space-y-4 text-sm">
               <div className="flex items-start gap-3">

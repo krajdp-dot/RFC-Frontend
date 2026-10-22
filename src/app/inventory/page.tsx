@@ -55,7 +55,7 @@ export default function InventoryPage() {
   const lowStockItems = inventory.filter(item => item.remainingBoxes <= 10).length;
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-5 pb-10">
       <PageHeader
         title="Inventory"
         description="Track stock levels, freshness and value."
@@ -71,7 +71,7 @@ export default function InventoryPage() {
         ]}
       />
 
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
           <div className="relative w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

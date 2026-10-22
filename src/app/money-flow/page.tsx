@@ -60,7 +60,7 @@ export default function MoneyFlowPage() {
   }, [period]);
   
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-10">
+    <div className="space-y-5 max-w-4xl mx-auto pb-10">
       <PageHeader
         title="Money Flow"
         subtitle="See how money moves through your business."
@@ -88,7 +88,7 @@ export default function MoneyFlowPage() {
       )}
 
       {!loading && error && (
-        <div className="p-8 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">
+        <div className="p-8 text-center text-destructive rounded-xl border border-border bg-white shadow-sm">
           <p>{error}</p>
         </div>
       )}
@@ -96,7 +96,7 @@ export default function MoneyFlowPage() {
       {!loading && !error && data && (
         <>
           {/* Money Flow Waterfall */}
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 lg:p-8">
+          <div className="rounded-xl border border-border bg-white shadow-sm p-6 lg:p-8">
             <h2 className="text-sm font-semibold tracking-tight text-foreground mb-8">Cash Flow Statement ({period})</h2>
             
             <div className="space-y-4 text-lg">

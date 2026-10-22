@@ -63,7 +63,7 @@ export default function PayablesPage() {
   const bucketOver45Pct = ((Number(summary?.dueOver45) || 0) / total) * 100;
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-5 pb-10">
       <PageHeader
         title="Payables"
         subtitle="Money you owe to suppliers."
@@ -73,7 +73,7 @@ export default function PayablesPage() {
       <MetricStrip metrics={metrics} />
 
       {/* Ageing Breakdown */}
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6">
+      <div className="rounded-xl border border-border bg-white shadow-sm p-6">
         <h2 className="text-sm font-semibold tracking-tight text-foreground mb-4">Ageing Breakdown</h2>
         <div className="flex h-8 rounded-md overflow-hidden mb-4 bg-muted">
           <div className="bg-emerald-500" style={{ width: `${bucket0to15Pct}%` }} title={`0-15 days: ${formatCurrency(summary?.due0To15)}`}></div>
@@ -101,8 +101,8 @@ export default function PayablesPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b flex justify-between items-center">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden flex flex-col">
+        <div className="px-4 py-3 border-b flex justify-between items-center">
           <h2 className="text-sm font-semibold tracking-tight text-foreground">Supplier Payables</h2>
           <Button variant="outline" size="sm" onClick={loadData}>Refresh</Button>
         </div>
@@ -129,29 +129,29 @@ export default function PayablesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50 text-muted-foreground text-left">
-                  <th className="px-6 py-3 font-medium">Supplier</th>
-                  <th className="px-6 py-3 font-medium text-right">Outstanding</th>
-                  <th className="px-6 py-3 font-medium text-right">0-15d</th>
-                  <th className="px-6 py-3 font-medium text-right">16-30d</th>
-                  <th className="px-6 py-3 font-medium text-right">31-45d</th>
-                  <th className="px-6 py-3 font-medium text-right">45d+</th>
-                  <th className="px-6 py-3 font-medium text-right">Action</th>
+                  <th className="px-4 py-3 font-medium">Supplier</th>
+                  <th className="px-4 py-3 font-medium text-right">Outstanding</th>
+                  <th className="px-4 py-3 font-medium text-right">0-15d</th>
+                  <th className="px-4 py-3 font-medium text-right">16-30d</th>
+                  <th className="px-4 py-3 font-medium text-right">31-45d</th>
+                  <th className="px-4 py-3 font-medium text-right">45d+</th>
+                  <th className="px-4 py-3 font-medium text-right">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {aging.map((r) => (
                   <tr key={r.supplierId} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-4 font-medium">
+                    <td className="px-4 py-3 font-medium">
                       <Link href={`/suppliers/${r.supplierId}`} className="hover:underline">
                         {r.supplierName}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-right tabular-nums font-bold text-amber-600">{formatCurrency(r.totalOutstanding)}</td>
-                    <td className="px-6 py-4 text-right tabular-nums">{formatCurrency(r.due0To15)}</td>
-                    <td className="px-6 py-4 text-right tabular-nums">{formatCurrency(r.due16To30)}</td>
-                    <td className="px-6 py-4 text-right tabular-nums text-orange-600">{formatCurrency(r.due31To45)}</td>
-                    <td className="px-6 py-4 text-right tabular-nums text-red-600 font-medium">{formatCurrency(r.dueOver45)}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-3 text-right tabular-nums font-bold text-amber-600">{formatCurrency(r.totalOutstanding)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums">{formatCurrency(r.due0To15)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums">{formatCurrency(r.due16To30)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums text-orange-600">{formatCurrency(r.due31To45)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums text-red-600 font-medium">{formatCurrency(r.dueOver45)}</td>
+                    <td className="px-4 py-3 text-right">
                       <Link href={`/payables/make-payment?supplierId=${r.supplierId}`}>
                         <Button variant="outline" size="sm">Pay Now</Button>
                       </Link>

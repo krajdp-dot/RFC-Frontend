@@ -41,21 +41,21 @@ export function PageHeader({ title, subtitle, description, primaryAction, second
   const visibleSecondary = secondaryActions?.filter((action) => allowed(action.permission));
   const showPrimary = primaryAction && allowed(primaryAction.permission);
   return (
-    <div className={cn("mb-7 flex flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-6", className)}>
+    <div className={cn("mb-5 flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-5", className)}>
       <div>
-        <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-primary/80"><span className="h-1.5 w-1.5 rounded-full bg-primary" /> RFC workspace</div>
-        <h1 className="text-2xl font-semibold tracking-[-0.035em] sm:text-[30px]">{title}</h1>
-        {sub && <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-[15px]">{sub}</p>}
+        <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-primary" /> RFC workspace</div>
+        <h1 className="text-[25px] font-semibold tracking-[-0.04em] sm:text-[28px]">{title}</h1>
+        {sub && <p className="mt-1 max-w-2xl text-[13px] leading-5 text-muted-foreground sm:text-sm">{sub}</p>}
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
         {visibleSecondary?.map((action, i) => (
-          <Button key={i} variant="outline" size="sm" className="h-9 gap-2 rounded-xl px-3 text-[13px]" onClick={action.onClick}>
+          <Button key={i} variant="outline" size="sm" className="h-9 gap-2 rounded-lg px-3 text-[13px]" onClick={action.onClick}>
             {action.icon && <action.icon className="h-3.5 w-3.5" />}
             {action.label}
           </Button>
         ))}
         {showPrimary && primaryAction.href ? (
-          <Link href={primaryAction.href} className={cn(buttonVariants({ size: "sm" }), "h-8 gap-1.5 text-[13px]")}>
+          <Link href={primaryAction.href} className={cn(buttonVariants({ size: "sm" }), "h-9 gap-1.5 rounded-lg px-3 text-[13px]")}>
             {primaryAction.icon && <primaryAction.icon className="h-3.5 w-3.5" />}
             {primaryAction.label}
           </Link>

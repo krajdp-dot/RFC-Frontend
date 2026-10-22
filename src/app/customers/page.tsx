@@ -230,7 +230,7 @@ export default function CustomersPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title="Customers"
         subtitle="Manage customer relationships, credit and collections."
@@ -247,8 +247,8 @@ export default function CustomersPage() {
 
       <MetricStrip metrics={metrics} />
 
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b flex items-center justify-between gap-4">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
+        <div className="px-4 py-3 border-b flex items-center justify-between gap-4">
           <h2 className="text-sm font-semibold tracking-tight text-foreground">
             Customer List
           </h2>
@@ -258,7 +258,7 @@ export default function CustomersPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search customers..."
-            className="h-9 w-64 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="h-9 w-64 rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15 outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
@@ -304,27 +304,27 @@ export default function CustomersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50 text-muted-foreground">
-                  <th className="px-6 py-3 text-left font-medium">
+                  <th className="px-4 py-3 text-left font-medium">
                     Customer
                   </th>
 
-                  <th className="px-6 py-3 text-left font-medium">
+                  <th className="px-4 py-3 text-left font-medium">
                     Phone
                   </th>
 
-                  <th className="px-6 py-3 text-left font-medium">
+                  <th className="px-4 py-3 text-left font-medium">
                     Business
                   </th>
 
-                  <th className="px-6 py-3 text-right font-medium">
+                  <th className="px-4 py-3 text-right font-medium">
                     Credit Limit
                   </th>
 
-                  <th className="px-6 py-3 text-right font-medium">
+                  <th className="px-4 py-3 text-right font-medium">
                     Credit Terms
                   </th>
 
-                  <th className="px-6 py-3 text-left font-medium">
+                  <th className="px-4 py-3 text-left font-medium">
                     Status
                   </th>
                 </tr>
@@ -339,29 +339,29 @@ export default function CustomersPage() {
                     }
                     className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors"
                   >
-                    <td className="px-6 py-4 font-medium">
+                    <td className="px-4 py-3 font-medium">
                       {customer.name}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       {customer.phone || "—"}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       {customer.businessName || "—"}
                     </td>
 
-                    <td className="px-6 py-4 text-right tabular-nums">
+                    <td className="px-4 py-3 text-right tabular-nums">
                       {formatCurrency(customer.creditLimit)}
                     </td>
 
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-3 text-right">
                       {customer.creditTermsDays != null
                         ? `${customer.creditTermsDays} days`
                         : "—"}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <StatusBadge
                         label={
                           customer.active === false
@@ -396,8 +396,8 @@ export default function CustomersPage() {
             }
           }}
         >
-          <div className="w-full max-w-2xl rounded-xl border bg-background shadow-xl">
-            <div className="flex items-center justify-between border-b px-6 py-4">
+          <div className="w-full max-w-2xl rounded-xl border border-border bg-white shadow-[0_18px_60px_rgba(10,20,14,0.16)]">
+            <div className="flex items-center justify-between border-b px-4 py-3">
               <div>
                 <h2 className="text-lg font-semibold">
                   Add Customer
@@ -429,7 +429,7 @@ export default function CustomersPage() {
                     updateForm("name", event.target.value)
                   }
                   placeholder="Ramesh Singh"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
 
@@ -444,7 +444,7 @@ export default function CustomersPage() {
                     updateForm("phone", event.target.value)
                   }
                   placeholder="+919876543210"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
 
@@ -459,7 +459,7 @@ export default function CustomersPage() {
                     updateForm("businessName", event.target.value)
                   }
                   placeholder="Ramesh Trading Co."
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
 
@@ -476,7 +476,7 @@ export default function CustomersPage() {
                     updateForm("creditLimit", event.target.value)
                   }
                   placeholder="50000"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
 
@@ -496,7 +496,7 @@ export default function CustomersPage() {
                     )
                   }
                   placeholder="15"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
 
@@ -511,7 +511,7 @@ export default function CustomersPage() {
                     updateForm("address", event.target.value)
                   }
                   placeholder="123 Market Road"
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-input bg-white px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/15"
                 />
               </div>
 
@@ -532,7 +532,7 @@ export default function CustomersPage() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 border-t px-6 py-4">
+            <div className="flex justify-end gap-3 border-t px-4 py-3">
               <button
                 type="button"
                 onClick={() => setShowAddDialog(false)}

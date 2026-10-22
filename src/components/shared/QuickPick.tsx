@@ -68,7 +68,6 @@ export function QuickPick({
   }, [options, query]);
 
   const visible = query.trim() || showAll ? filtered : filtered.slice(0, maxVisible);
-  const selected = options.find((option) => option.value === value);
   const hiddenCount = Math.max(0, filtered.length - visible.length);
 
   const gridCols: Record<1 | 2 | 3 | 4, string> = {
@@ -79,7 +78,7 @@ export function QuickPick({
   };
 
   return (
-    <div className={cn("flex min-w-0 flex-col gap-3", className)}>
+    <div className={cn("flex min-w-0 flex-col gap-2.5", className)}>
       {(label || hint) && (
         <div className="flex min-w-0 flex-col gap-0.5">
           {label && <div className="text-sm font-semibold tracking-tight">{label}</div>}
@@ -101,18 +100,8 @@ export function QuickPick({
             disabled={disabled}
             autoComplete="off"
             aria-label={label ? `Search ${label.toLowerCase()}` : "Search options"}
-            className="h-10 w-full rounded-xl border border-input bg-background pl-9 pr-3 text-sm outline-none transition placeholder:text-muted-foreground/80 focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm outline-none transition placeholder:text-muted-foreground/80 focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50"
           />
-        </div>
-      )}
-
-      {selected && mode !== "segments" && (
-        <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
-          <span className="shrink-0">Selected</span>
-          <span className="truncate rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 font-semibold text-primary">
-            {selected.label}
-          </span>
-          {selected.meta && <span className="hidden truncate sm:inline">{selected.meta}</span>}
         </div>
       )}
 
@@ -122,7 +111,7 @@ export function QuickPick({
             ? "flex flex-wrap gap-2"
             : mode === "list"
               ? "flex flex-col gap-2"
-              : cn("grid gap-2.5", gridCols[columns]),
+              : cn("grid gap-2", gridCols[columns]),
         )}>
           {visible.map((option) => {
             const isSelected = option.value === value;
@@ -136,7 +125,7 @@ export function QuickPick({
                   aria-pressed={isSelected}
                   onClick={() => onChange(option.value)}
                   className={cn(
-                    "inline-flex min-h-10 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                    "inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
                     isSelected
                       ? "border-primary/50 bg-primary/10 text-primary shadow-sm"
                       : "border-border bg-background text-foreground hover:border-primary/30 hover:bg-muted/50",
@@ -159,7 +148,7 @@ export function QuickPick({
                   aria-pressed={isSelected}
                   onClick={() => onChange(option.value)}
                   className={cn(
-                    "group flex min-h-[58px] w-full min-w-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                    "group flex min-h-[52px] w-full min-w-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
                     isSelected
                       ? "border-primary/40 bg-primary/5 ring-1 ring-primary/10"
                       : "border-border bg-background hover:border-primary/30 hover:bg-muted/30",
@@ -195,7 +184,7 @@ export function QuickPick({
                 aria-pressed={isSelected}
                 onClick={() => onChange(option.value)}
                 className={cn(
-                  "group relative flex min-h-[92px] min-w-0 flex-col items-start rounded-xl border p-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                  "group relative flex min-h-[76px] min-w-0 flex-col items-start rounded-lg border p-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
                   isSelected
                     ? "border-primary/50 bg-primary/5 ring-1 ring-primary/15"
                     : "border-border bg-background hover:border-primary/35",
@@ -203,7 +192,7 @@ export function QuickPick({
                 )}
               >
                 <span className={cn(
-                  "mb-2.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                  "mb-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
                   isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                 )}>
                   {Icon ? <Icon className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}

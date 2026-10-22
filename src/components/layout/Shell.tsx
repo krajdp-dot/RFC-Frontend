@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { CommandMenu } from "./CommandMenu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { NoAccess } from "@/components/auth/Can";
@@ -12,12 +13,20 @@ import { permissionForRoute } from "@/lib/permissions";
 export function Shell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const pathname = usePathname();
   const { can, loading, role } = useAuth();
 
   useEffect(() => {
     setMobileOpen(false);
+    setCommandOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const openCommandMenu = () => setCommandOpen(true);
+    window.addEventListener("rfc:open-command-menu", openCommandMenu);
+    return () => window.removeEventListener("rfc:open-command-menu", openCommandMenu);
+  }, []);
 
   const isAuthRoute = pathname === '/login' || pathname === '/register';
 
@@ -34,7 +43,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const blocked = !loading && required !== undefined && !can(required);
 
   return (
-    <div className={cn("min-h-screen flex", pathname === "/" ? "bg-white" : "bg-background")}>
+    <div className={cn("min-h-screen flex", "bg-background")}>
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <button
@@ -43,7 +52,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             className="absolute inset-0 bg-black/25"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 z-10 w-[256px]">
+          <div className="absolute inset-y-0 left-0 z-10 w-[240px]">
             <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
           </div>
         </div>
@@ -58,13 +67,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <div 
         className={cn(
           "flex flex-col flex-1 min-w-0 transition-all duration-200",
-          collapsed ? "md:pl-[72px]" : "md:pl-[256px]"
+          collapsed ? "md:pl-[64px]" : "md:pl-[240px]"
         )}
       >
-        <Header mobileMenuOpen={mobileOpen} onMobileMenuToggle={() => setMobileOpen((open) => !open)} />
-        <main className={cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8", pathname === "/" && "bg-white")}>
+        <Header mobileMenuOpen={mobileOpen} onMobileMenuToggle={() => setMobileOpen((open) => !open)} onCommandMenuOpen={() => setCommandOpen(true)} />
+        <main className={cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-5 xl:p-6", pathname === "/" && "bg-white")}>
           {blocked ? <NoAccess role={role} /> : children}
         </main>
+        <CommandMenu open={commandOpen} onClose={() => setCommandOpen(false)} />
       </div>
     </div>
   );

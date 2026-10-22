@@ -180,7 +180,7 @@ export default function ExpensesPage() {
   const colors = ["bg-blue-500", "bg-amber-500", "bg-green-500", "bg-purple-500", "bg-red-500", "bg-slate-500"];
 
   return (
-    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-4 px-1 pb-8">
       <PageHeader 
         title="Expenses" 
         subtitle="Understand where business money is going." 
@@ -277,10 +277,10 @@ export default function ExpensesPage() {
       <MetricStrip metrics={metrics} />
       
       {breakdown.length > 0 && (
-        <div className="flex flex-col rounded-2xl border border-border/80 bg-card p-5 shadow-sm">
+        <div className="flex flex-col rounded-xl border border-border bg-white p-5 shadow-sm">
           <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-6">Where did money go? (This Month)</h2>
           
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div className="h-6 w-full rounded-full overflow-hidden flex bg-muted">
               {breakdown.map((item: any, i: number) => {
                 const pct = (Number(item.amount) / Number(summary.monthTotal)) * 100;
@@ -310,7 +310,7 @@ export default function ExpensesPage() {
         </div>
       )}
       
-      <div className="flex flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
+      <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
           <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Recent Expenses</h2>
           <div className="flex items-center gap-2">

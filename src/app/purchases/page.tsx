@@ -72,7 +72,7 @@ export default function PurchasesPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col gap-4 p-5 w-full max-w-7xl mx-auto">
       <PageHeader 
         title="Purchases" 
         subtitle="Track procurement, supplier payments and inventory additions." 
@@ -81,7 +81,7 @@ export default function PurchasesPage() {
       
       <MetricStrip metrics={metrics} />
       
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden flex flex-col">
         <div className="p-4 border-b flex items-center justify-between bg-muted/20">
           <h2 className="text-sm font-semibold tracking-tight text-foreground">Recent Purchases</h2>
           <div className="flex items-center gap-2">
