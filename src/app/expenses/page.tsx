@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
 import { fetchApi } from "@/lib/fetchApi";
@@ -316,16 +316,17 @@ export default function ExpensesPage() {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input 
-                type="text" 
-                placeholder="Search expenses..." 
+              <Input
+                type="search"
+                aria-label="Search expenses"
+                placeholder="Search expenses..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-1.5 text-sm border rounded-lg bg-background focus:outline-none focus:ring-1 focus:ring-primary w-64"
+                className="h-9 w-64 pl-9"
               />
             </div>
-            <Button variant="outline" size="icon" className="h-8 w-8 text-muted-foreground" onClick={loadData}>
-              <Filter className="w-4 h-4" />
+            <Button type="button" variant="outline" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground" onClick={loadData} disabled={loading} aria-label="Refresh expenses" title="Refresh expenses">
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
         </div>
