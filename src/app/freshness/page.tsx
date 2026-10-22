@@ -41,7 +41,7 @@ export default function FreshnessPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 pb-10">
+      <div className="space-y-5 pb-10">
         <PageHeader title="Freshness Control" description="Monitor stock quality, plan markdowns and prevent waste." />
         <div className="p-8 text-center text-muted-foreground">Loading freshness data...</div>
       </div>
@@ -50,9 +50,9 @@ export default function FreshnessPage() {
 
   if (error || !data) {
     return (
-      <div className="space-y-6 pb-10">
+      <div className="space-y-5 pb-10">
         <PageHeader title="Freshness Control" description="Monitor stock quality, plan markdowns and prevent waste." />
-        <div className="p-8 text-center text-destructive rounded-2xl border border-border/80 bg-card shadow-sm">
+        <div className="p-8 text-center text-destructive rounded-xl border border-border bg-white shadow-sm">
           <p>{error || "No data available."}</p>
           <button type="button" onClick={loadData} className="mt-3 underline">Try again</button>
         </div>
@@ -63,7 +63,7 @@ export default function FreshnessPage() {
   const items = Array.isArray(data.items) ? data.items : [];
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-5 pb-10">
       <PageHeader
         title="Freshness Control"
         description="Monitor stock quality, plan markdowns and prevent waste."
@@ -80,8 +80,8 @@ export default function FreshnessPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
+        <div className="lg:col-span-2 space-y-5">
+          <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
             <div className="p-4 border-b flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-destructive"></div>
               <h3 className="text-sm font-semibold tracking-tight text-foreground">STOCK AT RISK</h3>
@@ -129,8 +129,8 @@ export default function FreshnessPage() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 space-y-4">
+        <div className="space-y-5">
+          <div className="rounded-xl border border-border bg-white shadow-sm p-6 space-y-4">
             <h3 className="text-sm font-semibold tracking-tight text-foreground">VALUE AT RISK</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
