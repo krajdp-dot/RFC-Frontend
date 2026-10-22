@@ -135,7 +135,7 @@ export default function CashBanksPage() {
   const expectedCash = accounts.find(a => a.type === 'CASH')?.balance || 0;
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-5 pb-10">
       <PageHeader
         title="Cash & Banks"
         subtitle="Track all money across accounts."
@@ -266,7 +266,7 @@ export default function CashBanksPage() {
         {/* Left Col - Transactions */}
         <div className="lg:col-span-2">
           <div className="bg-card border rounded-xl overflow-hidden flex flex-col h-full">
-            <div className="px-6 py-4 border-b flex items-center justify-between">
+            <div className="px-4 py-3 border-b flex items-center justify-between">
               <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Recent Transactions</h2>
               <Button variant="outline" size="sm">View All</Button>
             </div>
