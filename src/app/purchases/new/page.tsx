@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { fetchApi } from "@/lib/fetchApi";
+import { todayBusinessDate } from "@/lib/businessDate";
 import { QuickPick } from "@/components/shared/QuickPick";
 
 type Option = {
@@ -63,7 +64,7 @@ export default function NewPurchasePage() {
 
   const [formData, setFormData] = useState({
     supplierId: prefillSupplierId,
-    businessDate: new Date().toISOString().split("T")[0],
+    businessDate: todayBusinessDate(),
     items: [
       {
         productId: "",
