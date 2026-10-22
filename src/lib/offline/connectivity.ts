@@ -1,4 +1,5 @@
 import type { ConnectivityStatus } from './types';
+import { getApiBaseUrl } from '@/lib/apiBaseUrl';
 
 /**
  * Phase 11, section 14 — navigator.onLine only tells you the device has
@@ -22,8 +23,7 @@ const PROBE_TIMEOUT_MS = 4000;
 const POLL_INTERVAL_MS = 20000;
 
 function healthUrl(): string {
-  const base = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
-  return `${base}${HEALTH_PATH}`;
+  return `${getApiBaseUrl()}${HEALTH_PATH}`;
 }
 
 async function probeBackend(): Promise<boolean> {
