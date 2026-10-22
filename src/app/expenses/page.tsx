@@ -180,7 +180,7 @@ export default function ExpensesPage() {
   const colors = ["bg-blue-500", "bg-amber-500", "bg-green-500", "bg-purple-500", "bg-red-500", "bg-slate-500"];
 
   return (
-    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-1 pb-12">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-4 px-1 pb-8">
       <PageHeader 
         title="Expenses" 
         subtitle="Understand where business money is going." 
