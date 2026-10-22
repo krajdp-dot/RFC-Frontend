@@ -12,7 +12,11 @@ export async function fetchApi(
   config: { redirectOn401?: boolean } = {},
 ) {
   const redirectOn401 = config.redirectOn401 ?? true;
-  const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+  // Preview deployments may not inherit the Production-only Vercel env var.
+  // Keep RFC preview builds pointed at the same deployed API unless explicitly overridden.
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_API_URL || "https://rfc-backend-rkic.onrender.com"
+  ).replace(/\/$/, "");
 
   const url = baseUrl + (endpoint.startsWith("/api/v1") ? "" : "/api/v1") + endpoint;
 
