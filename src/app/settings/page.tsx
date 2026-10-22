@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Dialog,
   DialogContent,
@@ -248,8 +249,9 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Opening Balance (optional)</label>
-              <Input
-                type="number" min="0" step="0.01"
+              <NumberInput
+                min="0"
+                step="0.01"
                 value={form.openingBalance}
                 onChange={(e) => setForm({ ...form, openingBalance: e.target.value })}
               />

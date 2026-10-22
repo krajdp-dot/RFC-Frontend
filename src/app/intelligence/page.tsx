@@ -90,25 +90,33 @@ function SignalGroup({
             <p className="text-xs mt-1">{emptyDescription}</p>
           </div>
         ) : (
-          signals.map((s) => (
-            <Link
-              key={s.id}
-              href={s.href || "#"}
-              className="p-4 flex items-start gap-3 group hover:bg-muted/30 transition-colors"
-            >
-              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5", style.iconWrap)}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <div className="grow min-w-0">
-                <p className="font-medium text-sm">{s.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{s.detail}</p>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <p className="text-[11px] text-muted-foreground/70">{s.basis?.explanation}</p>
-                  {s.basis?.sufficiency === "LIMITED" && <StatusBadge variant="watch" label="Limited data" />}
+          signals.map((s) => {
+            const content = (
+              <>
+                <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5", style.iconWrap)}>
+                  <Icon className="w-4 h-4" />
                 </div>
+                <div className="grow min-w-0">
+                  <p className="font-medium text-sm">{s.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{s.detail}</p>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                    <p className="text-[11px] text-muted-foreground/70">{s.basis?.explanation}</p>
+                    {s.basis?.sufficiency === "LIMITED" && <StatusBadge variant="watch" label="Limited data" />}
+                  </div>
+                </div>
+              </>
+            );
+            const cardClass = "p-4 flex items-start gap-3 group transition-colors hover:bg-muted/30";
+            return s.href ? (
+              <Link key={s.id} href={s.href} className={`${cardClass} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/25`}>
+                {content}
+              </Link>
+            ) : (
+              <div key={s.id} className={`${cardClass} cursor-default`}>
+                {content}
               </div>
-            </Link>
-          ))
+            );
+          })
         )}
       </div>
     </div>

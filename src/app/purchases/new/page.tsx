@@ -5,8 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { fetchApi } from "@/lib/fetchApi";
+import { todayBusinessDate } from "@/lib/businessDate";
 import { QuickPick } from "@/components/shared/QuickPick";
 
 type Option = {
@@ -62,7 +64,7 @@ export default function NewPurchasePage() {
 
   const [formData, setFormData] = useState({
     supplierId: prefillSupplierId,
-    businessDate: new Date().toISOString().split("T")[0],
+    businessDate: todayBusinessDate(),
     items: [
       {
         productId: "",
@@ -339,8 +341,7 @@ export default function NewPurchasePage() {
                 />
               </div>
 
-              <Input
-                type="number"
+              <NumberInput
                 min="1"
                 required
                 placeholder="Qty"
@@ -355,8 +356,7 @@ export default function NewPurchasePage() {
                 }
               />
 
-              <Input
-                type="number"
+              <NumberInput
                 min="0"
                 step="0.01"
                 required
@@ -391,8 +391,7 @@ export default function NewPurchasePage() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Transport</label>
-              <Input
-                type="number"
+              <NumberInput
                 min="0"
                 value={formData.transport}
                 onChange={(e) =>
@@ -406,8 +405,7 @@ export default function NewPurchasePage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Loading</label>
-              <Input
-                type="number"
+              <NumberInput
                 min="0"
                 value={formData.loading}
                 onChange={(e) =>
@@ -421,8 +419,7 @@ export default function NewPurchasePage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Unloading</label>
-              <Input
-                type="number"
+              <NumberInput
                 min="0"
                 value={formData.unloading}
                 onChange={(e) =>
@@ -436,8 +433,7 @@ export default function NewPurchasePage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Other</label>
-              <Input
-                type="number"
+              <NumberInput
                 min="0"
                 value={formData.otherCosts}
                 onChange={(e) =>
@@ -481,8 +477,7 @@ export default function NewPurchasePage() {
                 />
               </div>
 
-              <Input
-                type="number"
+              <NumberInput
                 min="0"
                 step="0.01"
                 placeholder="Amount Paid"

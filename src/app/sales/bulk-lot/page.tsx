@@ -1,5 +1,7 @@
 "use client";
 
+import { NumberInput } from "@/components/ui/number-input";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Package, Plus, X, ShoppingCart } from "lucide-react";
@@ -359,8 +361,7 @@ export default function BulkLotSalePage() {
                     <label className="text-xs text-muted-foreground">
                       Qty (boxes)
                     </label>
-                    <input
-                      type="number"
+                    <NumberInput
                       min="1"
                       value={alloc.quantity}
                       onChange={(e) =>
@@ -374,8 +375,7 @@ export default function BulkLotSalePage() {
                     <label className="text-xs text-muted-foreground">
                       Rate (₹/box)
                     </label>
-                    <input
-                      type="number"
+                    <NumberInput
                       step="0.01"
                       min="0"
                       value={alloc.rate}
@@ -394,8 +394,7 @@ export default function BulkLotSalePage() {
                     <label className="text-xs text-muted-foreground">
                       Discount (₹)
                     </label>
-                    <input
-                      type="number"
+                    <NumberInput
                       step="0.01"
                       min="0"
                       value={alloc.discount}
@@ -409,8 +408,7 @@ export default function BulkLotSalePage() {
                     <label className="text-xs text-muted-foreground">
                       Payment (₹)
                     </label>
-                    <input
-                      type="number"
+                    <NumberInput
                       step="0.01"
                       min="0"
                       value={alloc.paymentAmount}

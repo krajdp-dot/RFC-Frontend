@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Dialog,
   DialogContent,
@@ -172,8 +173,7 @@ export default function ProductsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium mb-1 block">Reorder Threshold (boxes)</label>
-                <Input
-                  type="number" min="0"
+                <NumberInput min="0"
                   value={form.reorderThreshold}
                   onChange={(e) => setForm({ ...form, reorderThreshold: e.target.value })}
                   placeholder="e.g. 50"
@@ -181,8 +181,7 @@ export default function ProductsPage() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Reorder Qty (boxes)</label>
-                <Input
-                  type="number" min="0"
+                <NumberInput min="0"
                   value={form.reorderQty}
                   onChange={(e) => setForm({ ...form, reorderQty: e.target.value })}
                   placeholder="e.g. 200"
@@ -192,16 +191,14 @@ export default function ProductsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium mb-1 block">Default Markup %</label>
-                <Input
-                  type="number" min="0" step="0.1"
+                <NumberInput min="0" step="0.1"
                   value={form.defaultMarkupPct}
                   onChange={(e) => setForm({ ...form, defaultMarkupPct: e.target.value })}
                 />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Min Margin %</label>
-                <Input
-                  type="number" min="0" step="0.1"
+                <NumberInput min="0" step="0.1"
                   value={form.minMarginPct}
                   onChange={(e) => setForm({ ...form, minMarginPct: e.target.value })}
                 />
@@ -209,8 +206,7 @@ export default function ProductsPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Shelf Life (days)</label>
-              <Input
-                type="number" min="0"
+              <NumberInput min="0"
                 value={form.shelfLifeDays}
                 onChange={(e) => setForm({ ...form, shelfLifeDays: e.target.value })}
               />

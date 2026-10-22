@@ -1,5 +1,7 @@
 "use client";
 
+import { NumberInput } from "@/components/ui/number-input";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Trash2, AlertTriangle } from "lucide-react";
@@ -212,8 +214,7 @@ export default function WastagePage() {
             <label className="text-sm font-medium text-muted-foreground">
               Boxes to Waste
             </label>
-            <input
-              type="number"
+            <NumberInput
               min="1"
               max={selectedLot?.remainingBoxes || 9999}
               value={form.quantityBoxes}
@@ -228,8 +229,7 @@ export default function WastagePage() {
             <label className="text-sm font-medium text-muted-foreground">
               Weight (kg) — optional
             </label>
-            <input
-              type="number"
+            <NumberInput
               step="0.1"
               min="0"
               value={form.weightKg}

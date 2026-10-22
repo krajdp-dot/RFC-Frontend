@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useDebounce } from "@/hooks/useDebounce";
+import { MessageCircle } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader"
 import { MetricStrip } from "@/components/shared/MetricStrip"
 import { OfflineQueueNotice } from "@/components/offline/OfflineQueueNotice"
@@ -9,6 +9,8 @@ import { StatusBadge } from "@/components/shared/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { fetchApi } from "@/lib/fetchApi";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { PERMISSIONS } from "@/lib/permissions";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -23,6 +25,9 @@ export default function ReceivablesPage() {
   const [aging, setAging] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { can } = useAuth();
+  const [remindingCustomerId, setRemindingCustomerId] = useState<string | null>(null);
+  const [reminderFeedback, setReminderFeedback] = useState<{ customerId: string; kind: "success" | "error"; message: string } | null>(null);
 
   async function loadData() {
     try {
@@ -48,6 +53,30 @@ export default function ReceivablesPage() {
     loadData();
   }, []);
 
+  async function sendOutstandingReminder(customerId: string) {
+    if (!can(PERMISSIONS.WHATSAPP_SEND) || remindingCustomerId) return;
+    setRemindingCustomerId(customerId);
+    setReminderFeedback(null);
+    try {
+      await fetchApi(`/whatsapp/customers/${encodeURIComponent(customerId)}/outstanding-reminder`, {
+        method: "POST",
+      });
+      setReminderFeedback({
+        customerId,
+        kind: "success",
+        message: "Reminder request accepted by WhatsApp.",
+      });
+    } catch (err) {
+      setReminderFeedback({
+        customerId,
+        kind: "error",
+        message: err instanceof Error ? err.message : "Could not send the reminder.",
+      });
+    } finally {
+      setRemindingCustomerId(null);
+    }
+  }
+
   const metrics = [
     { label: "Total Receivables", value: formatCurrency(summary?.totalReceivables || 0) },
     { label: "Overdue", value: formatCurrency(summary?.totalOverdue || 0) },
@@ -66,8 +95,7 @@ export default function ReceivablesPage() {
     <div className="space-y-5 pb-10">
       <PageHeader
         title="Receivables"
-        subtitle="Money customers owe you."
-        primaryAction={{ label: "Send Reminders" }}
+        subtitle="Review customer dues, record collections and send individual WhatsApp reminders where enabled."
       />
 
       <MetricStrip metrics={metrics} />
@@ -147,16 +175,41 @@ export default function ReceivablesPage() {
                       <Link href={`/customers/${r.customerId}`} className="hover:underline">
                         {r.customerName}
                       </Link>
+                      {reminderFeedback?.customerId === r.customerId && (
+                        <p role="status" className={`mt-1 max-w-[220px] text-[11px] font-medium leading-4 ${reminderFeedback.kind === "success" ? "text-emerald-700" : "text-destructive"}`}>
+                          {reminderFeedback.message}
+                        </p>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums font-bold text-amber-600">{formatCurrency(r.totalOutstanding)}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{formatCurrency(r.due0To15)}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{formatCurrency(r.due16To30)}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-orange-600">{formatCurrency(r.due31To45)}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-red-600 font-medium">{formatCurrency(r.dueOver45)}</td>
-                    <td className="px-4 py-3 text-right">
-                      <Link href={`/receivables/receive-payment?customerId=${r.customerId}`}>
-                        <Button variant="ghost" size="sm">Receive</Button>
-                      </Link>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {can(PERMISSIONS.WHATSAPP_SEND) && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-1.5 rounded-lg px-2.5 text-xs"
+                            onClick={() => void sendOutstandingReminder(r.customerId)}
+                            disabled={remindingCustomerId !== null}
+                            aria-label={`Send outstanding reminder to ${r.customerName}`}
+                            title="Send WhatsApp outstanding reminder"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5" />
+                            {remindingCustomerId === r.customerId ? "Sending…" : "Remind"}
+                          </Button>
+                        )}
+                        <Link
+                          href={`/receivables/receive-payment?customerId=${r.customerId}`}
+                          className="inline-flex h-8 items-center rounded-lg bg-primary px-2.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
+                        >
+                          Receive
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

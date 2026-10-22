@@ -1,5 +1,7 @@
 "use client";
 
+import { NumberInput } from "@/components/ui/number-input";
+
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CreditCard } from "lucide-react";
@@ -231,8 +233,7 @@ export default function MakePaymentPage() {
             <label className="text-sm font-medium text-muted-foreground">
               Amount (₹) *
             </label>
-            <input
-              type="number"
+            <NumberInput
               step="0.01"
               min="0.01"
               value={form.amount}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { fetchApi } from "@/lib/fetchApi";
 
 function formatCurrency(amount: string | number) {
@@ -145,8 +146,7 @@ export default function SalesReturnsPage() {
                   <td className="py-2 text-right tabular-nums">{item.quantity} {item.unit}</td>
                   <td className="py-2 text-right tabular-nums">{formatCurrency(item.rate)}</td>
                   <td className="py-2 text-right">
-                    <Input
-                      type="number" min="0" max={item.quantity} step="0.01"
+                    <NumberInput min="0" max={item.quantity} step="0.01"
                       className="w-24 ml-auto"
                       value={returnLines[item.id]?.quantity || ""}
                       onChange={(e) => updateLine(item.id, "quantity", e.target.value)}
