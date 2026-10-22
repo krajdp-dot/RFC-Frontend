@@ -32,7 +32,7 @@ function displayValue(
 ): string {
   const parsed = numericValue(value);
   if (parsed === null || (emptyWhenZero && parsed === 0)) return "";
-  return String(value);
+  return cleanDraft(String(value));
 }
 
 function cleanDraft(value: string): string {
@@ -131,10 +131,11 @@ export function NumberInput({
   };
 
   const handleBlur: React.FocusEventHandler<HTMLInputElement> = (event) => {
-    const nextError = rangeMessage(draft, min, max, step);
+    const incomplete = draft === "-" || draft === "." || draft === "-.";
+    const nextError = incomplete ? "Enter a complete number." : rangeMessage(draft, min, max, step);
     setError(nextError);
     event.currentTarget.setCustomValidity(nextError);
-    const cleaned = cleanDraft(draft);
+    const cleaned = incomplete ? "" : cleanDraft(draft);
     setDraft(displayValue(cleaned, emptyWhenZero));
     focused.current = false;
     onBlur?.(event);
