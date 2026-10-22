@@ -78,17 +78,6 @@ export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => v
   }, [open, onClose]);
 
   useEffect(() => {
-    const openMenu = () => {
-      setQuery("");
-      setActiveIndex(0);
-      // Parent owns visibility, this event lets the header trigger the same menu.
-      window.dispatchEvent(new CustomEvent("rfc:command-menu-requested"));
-    };
-    window.addEventListener("rfc:open-command-menu", openMenu);
-    return () => window.removeEventListener("rfc:open-command-menu", openMenu);
-  }, []);
-
-  useEffect(() => {
     if (!open) return;
     setQuery("");
     setActiveIndex(0);
