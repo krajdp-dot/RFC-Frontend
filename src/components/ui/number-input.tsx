@@ -36,7 +36,7 @@ function displayValue(
 }
 
 function cleanDraft(value: string): string {
-  if (value === "" || value === "-" || value === "." || value === "-.") return "";
+  if (value === "" || value === "-" || value === "." || value === "-.") return value;
   const negative = value.startsWith("-");
   const unsigned = negative ? value.slice(1) : value;
   const [integerPart, decimalPart, ...rest] = unsigned.split(".");
