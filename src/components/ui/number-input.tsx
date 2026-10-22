@@ -118,9 +118,12 @@ export function NumberInput({
 
     const next = cleanDraft(raw);
     setDraft(next);
-    const nextError = rangeMessage(next, min, max, step);
+    const incomplete = next === "-" || next === "." || next === "-.";
+    const nextError = incomplete ? "" : rangeMessage(next, min, max, step);
     setError(nextError);
-    event.currentTarget.setCustomValidity(nextError);
+    // Keep intermediate edits possible, but never let Enter submit a lone
+    // decimal point or sign as a valid value before blur has fired.
+    event.currentTarget.setCustomValidity(incomplete ? "Enter a complete number." : nextError);
     onChange?.(event);
   };
 
