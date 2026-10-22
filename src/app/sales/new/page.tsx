@@ -25,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import { fetchApi } from "@/lib/fetchApi";
+import { todayBusinessDate } from "@/lib/businessDate";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOffline } from "@/contexts/OfflineContext";
 import { submitWithOfflineFallback } from "@/lib/offline/offlineMutate";
@@ -108,7 +109,7 @@ export default function NewSalePage() {
 
   const [formData, setFormData] = useState({
     customerId: prefillCustomerId,
-    businessDate: new Date().toISOString().split("T")[0],
+    businessDate: todayBusinessDate(),
     items: [
       {
         productId: "",
