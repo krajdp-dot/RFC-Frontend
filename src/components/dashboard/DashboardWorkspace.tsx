@@ -232,7 +232,7 @@ function KpiCard({
   return (
     <Link
       href={href}
-      className="group min-w-0 rounded-xl border border-neutral-200 bg-white p-4 transition-colors hover:border-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+      className="group min-w-0 rounded-xl border border-neutral-200 bg-white p-3.5 transition-colors hover:border-neutral-300 hover:shadow-[0_2px_8px_rgba(20,30,24,0.035)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
     >
       <div className="flex items-start justify-between gap-3">
         <p className="text-[13px] font-medium text-neutral-600">{label}</p>
@@ -241,7 +241,7 @@ function KpiCard({
       {loading ? (
         <LoadingBlock className="mt-4 h-8 w-32" />
       ) : (
-        <p className="mt-3 truncate text-[25px] font-semibold leading-tight tracking-[-0.035em] text-neutral-950 tabular-nums">
+        <p className="mt-3 truncate text-[23px] font-semibold leading-tight tracking-[-0.04em] text-neutral-950 tabular-nums">
           {value}
         </p>
       )}
@@ -253,9 +253,7 @@ function KpiCard({
           </span>
         )}
       </div>
-      <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-        View details <ArrowRight className="h-3.5 w-3.5" />
-      </span>
+      <span className="sr-only">View details</span>
     </Link>
   );
 }
@@ -374,7 +372,10 @@ export default function DashboardWorkspace() {
         if (!cancelled) setAnalytics(response);
       } catch (error) {
         if (!cancelled) {
-          setAnalyticsError(error instanceof Error ? error.message : "Period analytics could not be loaded.");
+          const message = error instanceof Error ? error.message : "Period analytics could not be loaded.";
+          setAnalyticsError(message.includes("YYYY-MM-DD")
+            ? "The analytics service rejected a valid reporting date. Current-position figures remain available; period trends need a backend date-validation fix."
+            : message);
           setAnalytics(null);
         }
       } finally {
@@ -601,15 +602,15 @@ export default function DashboardWorkspace() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 bg-white pb-12 text-neutral-900">
-      <section className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
+    <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-4 bg-white pb-8 text-neutral-900">
+      <section className="border-b border-neutral-200 bg-white pb-4 sm:pb-5">
         <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
           <div className="min-w-0">
             <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-700" />
               Business overview
             </div>
-            <h1 className="text-[28px] font-semibold leading-tight tracking-[-0.04em] text-neutral-950 sm:text-[32px]">
+            <h1 className="text-[27px] font-semibold leading-tight tracking-[-0.045em] text-neutral-950 sm:text-[30px]">
               Dashboard
             </h1>
             <p className="mt-1.5 text-sm text-neutral-600">
@@ -759,7 +760,7 @@ export default function DashboardWorkspace() {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-col gap-3 border-t border-neutral-100 pt-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-4 flex flex-col gap-3 border-t border-neutral-100 pt-3.5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold text-neutral-700">Reporting period</p>
             <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Dashboard date presets">
@@ -769,7 +770,7 @@ export default function DashboardWorkspace() {
                   type="button"
                   aria-pressed={preset === periodOption.value}
                   onClick={() => applyPreset(periodOption.value)}
-                  className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 ${preset === periodOption.value ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50"}`}
+                  className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 ${preset === periodOption.value ? "border-emerald-800 bg-emerald-800 text-white" : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50"}`}
                 >
                   {periodOption.label}
                 </button>
@@ -814,12 +815,12 @@ export default function DashboardWorkspace() {
         </div>
         <div className="flex flex-wrap gap-2">
           {canCreateSales && (
-            <Link href="/sales/new" className="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-800 px-3.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2">
+            <Link href="/sales/new" className="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-800 px-3 text-[13px] font-semibold text-white transition-colors hover:bg-emerald-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2">
               <ShoppingCart className="h-4 w-4" /> New sale
             </Link>
           )}
           {canCreatePurchases && (
-            <Link href="/purchases/new" className="inline-flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
+            <Link href="/purchases/new" className="inline-flex h-9 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 text-[13px] font-semibold text-neutral-800 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
               <PackagePlus className="h-4 w-4" /> New purchase
             </Link>
           )}
@@ -865,11 +866,11 @@ export default function DashboardWorkspace() {
         <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-[15px] font-semibold tracking-tight text-neutral-950">Financial overview</h2>
-            <p className="mt-1 text-xs leading-5 text-neutral-500">Activity for {businessDateLabel}. Percentage changes compare with the immediately preceding range of equal length when a nonzero baseline exists. Cash, receivables, payables and inventory are current positions.</p>
+            <p className="mt-1 text-xs leading-5 text-neutral-500">Sales and purchases for {businessDateLabel}. Cash, receivables, payables and stock show current positions.</p>
           </div>
           <span className="text-xs text-neutral-500">Amounts in INR</span>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
           {canViewSales && <KpiCard label="Total sales" value={formatCurrency(salesTotal)} subtext={analytics?.summary?.sales?.count !== undefined ? `${analytics.summary.sales.count} sales · ${businessDateLabel}` : analyticsError ? "Period data unavailable" : "Selected period"} change={analytics?.changes?.salesPct} icon={ShoppingCart} href="/sales" loading={analyticsLoading} />}
           {canViewSales && canViewReports && <KpiCard label="Gross profit" value={formatCurrency(grossProfit)} subtext={analytics?.summary?.sales?.grossMarginPct !== null && analytics?.summary?.sales?.grossMarginPct !== undefined ? `${analytics.summary.sales.grossMarginPct}% gross margin` : "Margin unavailable for this period"} change={analytics?.changes?.grossProfitPct} icon={TrendingUp} href="/reports" loading={analyticsLoading} />}
           {canViewPurchases && <KpiCard label="Total purchases" value={formatCurrency(purchasesTotal)} subtext={analytics?.summary?.purchases?.count !== undefined ? `${analytics.summary.purchases.count} purchases · ${businessDateLabel}` : analyticsError ? "Period data unavailable" : "Selected period"} change={analytics?.changes?.purchasesPct} icon={Package} href="/purchases" loading={analyticsLoading} />}
@@ -883,8 +884,8 @@ export default function DashboardWorkspace() {
         )}
       </section>
 
-      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,1fr)]">
-        <div className="min-w-0 rounded-xl border border-neutral-200 bg-white p-4 sm:p-5">
+      <section className="grid grid-cols-1 gap-3 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,1fr)]">
+        <div className="min-w-0 rounded-xl border border-neutral-200 bg-white p-4">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
             <div>
               <h2 className="text-[15px] font-semibold tracking-tight text-neutral-950">Sales & purchase trend</h2>
@@ -898,7 +899,7 @@ export default function DashboardWorkspace() {
           {analyticsLoading ? (
             <div className="mt-5 space-y-3"><LoadingBlock className="h-56 w-full" /></div>
           ) : analyticsError ? (
-            <div className="mt-5 flex min-h-[250px] flex-col items-center justify-center text-center">
+            <div className="mt-4 flex min-h-[180px] flex-col items-center justify-center text-center">
               <AlertCircle className="h-6 w-6 text-neutral-400" />
               <p className="mt-3 text-sm font-semibold text-neutral-800">Trend data unavailable</p>
               <p className="mt-1 max-w-sm text-xs leading-5 text-neutral-500">{analyticsError}</p>
@@ -962,7 +963,7 @@ export default function DashboardWorkspace() {
       </section>
 
       {(canViewReceivables || canViewPayables) && (
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {canViewReceivables && (
         <div className="min-w-0 rounded-xl border border-neutral-200 bg-white p-4 sm:p-5">
           <SectionHeading title="Customer collections" description="Outstanding customer balances and ageing." href="/receivables" hrefLabel="Receivables" />
