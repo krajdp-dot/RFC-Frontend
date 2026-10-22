@@ -8,6 +8,7 @@ import { MetricStrip } from "@/components/shared/MetricStrip";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Dialog,
   DialogContent,
@@ -220,8 +221,7 @@ export default function ExpensesPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium mb-1 block">Amount</label>
-                <Input
-                  type="number"
+                <NumberInput
                   min="0"
                   step="0.01"
                   value={form.amount}
