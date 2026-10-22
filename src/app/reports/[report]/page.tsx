@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, RefreshCw, CalendarDays, FileBarChart2 } from "lucide-react";
+import { ArrowLeft, Download, RefreshCw, CalendarDays, FileBarChart2, Search } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -250,6 +250,7 @@ export default function ReportDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [tableSearch, setTableSearch] = useState("");
 
   useEffect(() => {
     if (!spec) {
@@ -289,6 +290,16 @@ export default function ReportDetailPage() {
     return Array.isArray(source) ? source : [];
   }, [spec, data]);
 
+  const filteredRows = useMemo(() => {
+    const query = tableSearch.trim().toLocaleLowerCase("en-IN");
+    if (!query || !spec) return rows;
+    return rows.filter((row: any) =>
+      spec.columns.some((column) =>
+        String(row?.[column.key] ?? "").replaceAll("_", " ").toLocaleLowerCase("en-IN").includes(query)
+      )
+    );
+  }, [rows, spec, tableSearch]);
+
   function applyPreset(next: Exclude<Period, "custom">) {
     const range = getRange(next);
     setPeriod(next);
@@ -314,7 +325,7 @@ export default function ReportDetailPage() {
     if (!spec) return;
     const csvRows = [
       spec.columns.map((column) => column.label),
-      ...rows.map((row: any) => spec.columns.map((column) => row?.[column.key] ?? "")),
+      ...filteredRows.map((row: any) => spec.columns.map((column) => row?.[column.key] ?? "")),
     ];
     const csv = csvRows.map((row) =>
       row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
@@ -424,23 +435,34 @@ export default function ReportDetailPage() {
         <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <h2 className="text-sm font-semibold tracking-tight text-foreground">{spec.columns.length ? "Report details" : "Period summary"}</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">{spec.columns.length ? `${rows.length} rows returned from the report service` : "Calculated from the report service's recorded totals."}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{spec.columns.length ? (filteredRows.length === rows.length ? `${rows.length} rows from the report service` : `${filteredRows.length} of ${rows.length} rows shown`) : "Calculated from the report service's recorded totals."}</p>
           </div>
           {spec.columns.length > 0 && (
-            <Button type="button" variant="outline" size="sm" onClick={exportCsv} disabled={loading || rows.length === 0} className="h-8 rounded-lg">
-              <Download className="mr-1.5 h-3.5 w-3.5" /> Export CSV
-            </Button>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+              <div className="relative min-w-0 sm:w-56">
+                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  aria-label="Search report rows"
+                  placeholder="Find within this report…"
+                  value={tableSearch}
+                  onChange={(event) => setTableSearch(event.target.value)}
+                  className="h-8 pl-8 text-xs"
+                />
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={exportCsv} disabled={loading || filteredRows.length === 0} className="h-8 rounded-lg">
+                <Download className="mr-1.5 h-3.5 w-3.5" /> Export CSV
+              </Button>
+            </div>
           )}
         </div>
 
         {spec.columns.length === 0 ? (
-          <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">
-            {spec.metrics.map((metric) => (
-              <div key={metric.path} className="bg-white p-4">
-                <p className="text-xs text-muted-foreground">{metric.label}</p>
-                <p className="mt-1 text-base font-semibold tabular-nums">{loading ? "Loading…" : formatValue(getPathValue(data, metric.path), metric.format)}</p>
-              </div>
-            ))}
+          <div className="flex items-start gap-3 bg-muted/20 px-4 py-4">
+            <FileBarChart2 className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+            <p className="text-xs leading-5 text-muted-foreground">
+              These figures are the report service's recorded period totals. Transfers are shown for reference and do not change combined cash across the business's own accounts.
+            </p>
           </div>
         ) : loading ? (
           <div className="space-y-3 p-4">
@@ -448,13 +470,13 @@ export default function ReportDetailPage() {
             <div className="h-8 animate-pulse rounded-lg bg-muted/50" />
             <div className="h-8 animate-pulse rounded-lg bg-muted/50" />
           </div>
-        ) : rows.length === 0 ? (
+        ) : filteredRows.length === 0 ? (
           <div className="flex flex-col items-center px-5 py-12 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted/40">
               <FileBarChart2 className="h-4 w-4 text-muted-foreground" />
             </div>
-            <p className="mt-3 text-sm font-semibold text-foreground">No records in this period</p>
-            <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">No matching transactions were returned. Choose another reporting period or check the source page.</p>
+            <p className="mt-3 text-sm font-semibold text-foreground">{tableSearch.trim() ? "No matching rows" : "No records in this period"}</p>
+            <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">{tableSearch.trim() ? "Try a different search term or clear the search field." : "No matching transactions were returned. Choose another reporting period or check the source page."}</p>
           </div>
         ) : (
           <div className="max-h-[620px] overflow-auto">
@@ -465,7 +487,7 @@ export default function ReportDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row: any, index: number) => (
+                {filteredRows.map((row: any, index: number) => (
                   <tr key={row.id || row.lotId || row.productId || `${slug}-row-${index}`} className="transition-colors hover:bg-muted/25">
                     {spec.columns.map((column) => (
                       <td key={column.key} className={`px-4 py-3 ${column.format === "currency" || column.format === "number" || column.format === "percent" ? "text-right tabular-nums" : ""} ${column.format === "currency" ? "font-medium" : "text-foreground"}`}>
