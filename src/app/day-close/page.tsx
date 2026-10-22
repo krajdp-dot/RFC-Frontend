@@ -82,7 +82,7 @@ export default function DayClosePage() {
   const warnings = preview?.reconciliationWarnings || [];
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-4xl mx-auto pb-16">
+    <div className="flex flex-col gap-4 p-5 w-full max-w-4xl mx-auto pb-10">
       <PageHeader
         title="Day Close"
         subtitle="Reconcile and lock a business date so it can no longer be edited."
