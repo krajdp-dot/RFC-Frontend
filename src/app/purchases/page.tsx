@@ -72,7 +72,7 @@ export default function PurchasesPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col gap-4 p-5 w-full max-w-7xl mx-auto">
       <PageHeader 
         title="Purchases" 
         subtitle="Track procurement, supplier payments and inventory additions." 
