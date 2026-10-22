@@ -180,7 +180,7 @@ export default function ReceivePaymentPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6 px-1 pb-12">
+      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-4 px-1 pb-8">
         <div className="p-8 text-center text-muted-foreground">
           Loading...
         </div>
