@@ -55,13 +55,15 @@ export default function CashBanksPage() {
       setError("");
       
       const response = await fetchApi('/accounts');
-      if (Array.isArray(response)) {
-        setAccounts(response);
-      } else if (response && Array.isArray(response.data)) {
-        setAccounts(response.data);
-      } else {
-        setAccounts([]);
-      }
+      const receivedAccounts = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
+          ? response.data
+          : [];
+      const moneyAccounts = receivedAccounts.filter((account: any) =>
+        ["CASH", "BANK", "DIGITAL", "UPI"].includes(String(account.type || "").toUpperCase())
+      );
+      setAccounts(moneyAccounts);
     } catch (err: any) {
       console.error("Failed to load accounts:", err);
       setError(err.message || "Failed to load accounts");
