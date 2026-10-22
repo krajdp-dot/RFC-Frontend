@@ -138,18 +138,20 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-    font-variant-numeric: tabular-nums;
-  }
+
   html {
     @apply font-sans;
   }
-}
 
-@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-variant-numeric: tabular-nums;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
   ::selection {
-    background: color-mix(in oklab, var(--primary), white 78%);
+    background: color-mix(in oklab, var(--primary), white 82%);
     color: var(--foreground);
   }
 
@@ -161,37 +163,10 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  table {
-    border-collapse: separate;
-    border-spacing: 0;
-  }
-
-  thead th {
-    letter-spacing: -0.01em;
-    font-weight: 650;
-  }
-
-  tbody tr {
-    transition: background-color 150ms ease;
-  }
-
   input,
   select,
   textarea {
     accent-color: var(--primary);
-  }
-}
-
-@layer base {
-  body {
-    background: var(--background);
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  ::selection {
-    background: color-mix(in oklab, var(--primary), white 82%);
-    color: var(--foreground);
   }
 
   input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
