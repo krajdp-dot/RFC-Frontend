@@ -60,7 +60,7 @@ export function PageHeader({ title, subtitle, description, primaryAction, second
             {primaryAction.label}
           </Link>
         ) : showPrimary && (
-          <Button size="sm" className="h-8 gap-1.5 text-[13px]" onClick={primaryAction.onClick}>
+          <Button size="sm" className="h-9 gap-1.5 rounded-lg px-3 text-[13px]" onClick={primaryAction.onClick}>
             {primaryAction.icon && <primaryAction.icon className="h-3.5 w-3.5" />}
             {primaryAction.label}
           </Button>
