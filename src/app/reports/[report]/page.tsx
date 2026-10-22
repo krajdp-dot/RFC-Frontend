@@ -405,7 +405,7 @@ export default function ReportDetailPage() {
         </div>
       )}
 
-      <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${spec.metrics.length >= 4 ? "xl:grid-cols-4" : spec.metrics.length === 3 ? "xl:grid-cols-3" : spec.metrics.length === 2 ? "xl:grid-cols-2" : "xl:grid-cols-1"}`}>
+      <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${spec.metrics.length >= 5 ? "xl:grid-cols-3" : spec.metrics.length === 4 ? "xl:grid-cols-4" : spec.metrics.length === 3 ? "xl:grid-cols-3" : spec.metrics.length === 2 ? "xl:grid-cols-2" : "xl:grid-cols-1"}`}>
         {spec.metrics.map((metric) => (
           <div key={metric.path} className="min-w-0 rounded-xl border border-border bg-white p-4">
             <p className="text-xs font-medium text-muted-foreground">{metric.label}</p>
@@ -424,7 +424,7 @@ export default function ReportDetailPage() {
         <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <h2 className="text-sm font-semibold tracking-tight text-foreground">{spec.columns.length ? "Report details" : "Period summary"}</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">{spec.columns.length ? `${rows.length} rows returned · maximum 200 records per report` : "Calculated from the report service's recorded totals."}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{spec.columns.length ? `${rows.length} rows returned from the report service` : "Calculated from the report service's recorded totals."}</p>
           </div>
           {spec.columns.length > 0 && (
             <Button type="button" variant="outline" size="sm" onClick={exportCsv} disabled={loading || rows.length === 0} className="h-8 rounded-lg">
