@@ -9,6 +9,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
+import { todayBusinessDate } from "@/lib/businessDate";
 import {
   Dialog,
   DialogContent,
@@ -52,7 +53,7 @@ export default function ExpensesPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = todayBusinessDate();
   const [form, setForm] = useState({
     categoryId: "",
     description: "",
