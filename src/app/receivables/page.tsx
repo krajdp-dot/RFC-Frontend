@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
-import { useDebounce } from "@/hooks/useDebounce";
 import { PageHeader } from "@/components/shared/PageHeader"
 import { MetricStrip } from "@/components/shared/MetricStrip"
 import { OfflineQueueNotice } from "@/components/offline/OfflineQueueNotice"
