@@ -162,7 +162,7 @@ export default function AnalyticsPage() {
   ];
 
   const periodLabel = `${displayDate(range.start)} – ${displayDate(range.end)}`;
-  const allSourcesFailed = Boolean(data) && !data.sales && !data.margins && !data.wastage;
+  const allSourcesFailed = data !== null && !data.sales && !data.margins && !data.wastage;
 
   return (
     <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-4 pb-10">
