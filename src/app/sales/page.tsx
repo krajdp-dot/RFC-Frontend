@@ -75,7 +75,7 @@ export default function SalesPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 p-6 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col gap-4 p-5 w-full max-w-7xl mx-auto">
       <PageHeader 
         title="Sales" 
         subtitle="Track daily sales, customer credits and outgoing inventory." 
