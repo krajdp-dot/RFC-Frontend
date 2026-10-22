@@ -48,8 +48,8 @@ export default function InventoryPage() {
     loadInventory();
   }, []);
 
-  const filteredInventory = inventory.filter((item) => 
-    item.name?.toLowerCase().includes(search.toLowerCase())
+  const filteredInventory = inventory.filter((item) =>
+    item.name?.toLowerCase().includes(debouncedSearch.trim().toLowerCase())
   );
 
   const totalValue = inventory.reduce((sum, item) => sum + (Number(item.stockValue) || 0), 0);
