@@ -88,7 +88,7 @@ export default function DayClosePage() {
         subtitle="Reconcile and lock a business date so it can no longer be edited."
       />
 
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-5 flex items-center gap-4">
+      <div className="rounded-xl border border-border bg-white shadow-sm p-5 flex items-center gap-4">
         <label className="text-sm font-medium">Business Date</label>
         <Input
           type="date"
@@ -117,7 +117,7 @@ export default function DayClosePage() {
       )}
 
       {!loading && !error && alreadyClosed && existing && (
-        <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 space-y-4">
+        <div className="rounded-xl border border-border bg-white shadow-sm p-6 space-y-4">
           <div className="flex items-center gap-2 text-emerald-600">
             <Lock className="w-4 h-4" />
             <p className="font-medium">This business date is already closed.</p>
@@ -158,7 +158,7 @@ export default function DayClosePage() {
 
       {!loading && !error && !alreadyClosed && preview && (
         <>
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 space-y-4">
+          <div className="rounded-xl border border-border bg-white shadow-sm p-6 space-y-4">
             <h2 className="text-sm font-semibold tracking-tight text-foreground">Cash Breakdown (Cash Accounts Only)</h2>
             <div className="grid grid-cols-2 gap-y-3 text-sm">
               <span className="text-muted-foreground">Opening Cash</span>
@@ -183,15 +183,15 @@ export default function DayClosePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
+            <div className="rounded-xl border border-border bg-white shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Sales</p>
               <p className="text-lg font-semibold tabular-nums">{formatCurrency(preview.salesTotal)}</p>
             </div>
-            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
+            <div className="rounded-xl border border-border bg-white shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Purchases</p>
               <p className="text-lg font-semibold tabular-nums">{formatCurrency(preview.purchasesTotal)}</p>
             </div>
-            <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-4">
+            <div className="rounded-xl border border-border bg-white shadow-sm p-4">
               <p className="text-sm text-muted-foreground mb-1">Wastage</p>
               <p className="text-lg font-semibold tabular-nums">{formatCurrency(preview.wastageTotal)}</p>
             </div>
@@ -211,7 +211,7 @@ export default function DayClosePage() {
             </div>
           )}
 
-          <div className="rounded-2xl border border-border/80 bg-card shadow-sm p-6 space-y-4">
+          <div className="rounded-xl border border-border bg-white shadow-sm p-6 space-y-4">
             <h2 className="text-sm font-semibold tracking-tight text-foreground">Count &amp; Close</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
