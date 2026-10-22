@@ -104,7 +104,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-5 pb-12">
+    <div className="space-y-5 pb-8">
       <PageHeader
         title="Settings"
         description="Configure your business and application."
