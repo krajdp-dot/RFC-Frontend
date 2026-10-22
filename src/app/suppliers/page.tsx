@@ -1,5 +1,7 @@
 "use client";
 
+import { NumberInput } from "@/components/ui/number-input";
+
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
@@ -289,8 +291,7 @@ export default function SuppliersPage() {
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">Payment Terms (Days)</label>
-                <input
-                  type="number"
+                <NumberInput
                   min="0"
                   value={form.paymentTermsDays}
                   onChange={(event) => updateForm("paymentTermsDays", event.target.value)}
