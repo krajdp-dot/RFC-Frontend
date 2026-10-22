@@ -69,8 +69,8 @@ export default function InventoryPage() {
     ]);
     const csv = [columns, ...rows].map((row) =>
       row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")
-    ).join("\\r\\n");
-    const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
+    ).join("\r\n");
+    const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
