@@ -93,7 +93,7 @@ export default function ProductsPage() {
         primaryAction={{ label: "Add Product", onClick: () => setShowAdd(true), permission: PERMISSIONS.PRODUCTS_EDIT }}
       />
 
-      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
         {loading && <div className="p-8 text-center text-muted-foreground">Loading products...</div>}
         {!loading && error && (
           <div className="p-8 text-center text-destructive">
