@@ -236,7 +236,7 @@ export default function ReceivePaymentPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm sm:p-7 flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-white p-5 shadow-sm sm:p-7 flex flex-col gap-6">
         {/* Customer */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-muted-foreground">Customer *</label>
