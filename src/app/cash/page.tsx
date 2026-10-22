@@ -1,5 +1,7 @@
 "use client";
 
+import { NumberInput } from "@/components/ui/number-input";
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
@@ -189,8 +191,7 @@ export default function CashBanksPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium mb-1 block">Amount</label>
-                <Input
-                  type="number"
+                <NumberInput
                   min="0"
                   step="0.01"
                   value={form.amount}
