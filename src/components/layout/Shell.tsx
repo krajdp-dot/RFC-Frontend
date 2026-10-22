@@ -34,7 +34,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const blocked = !loading && required !== undefined && !can(required);
 
   return (
-    <div className={cn("min-h-screen flex", pathname === "/" ? "bg-white" : "bg-background")}>
+    <div className={cn("min-h-screen flex", "bg-background")}>
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <button
@@ -58,11 +58,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <div 
         className={cn(
           "flex flex-col flex-1 min-w-0 transition-all duration-200",
-          collapsed ? "md:pl-[72px]" : "md:pl-[256px]"
+          collapsed ? "md:pl-[64px]" : "md:pl-[240px]"
         )}
       >
         <Header mobileMenuOpen={mobileOpen} onMobileMenuToggle={() => setMobileOpen((open) => !open)} />
-        <main className={cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 xl:p-8", pathname === "/" && "bg-white")}>
+        <main className={cn("min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-5 xl:p-6", pathname === "/" && "bg-white")}>
           {blocked ? <NoAccess role={role} /> : children}
         </main>
       </div>
