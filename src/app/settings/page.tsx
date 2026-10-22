@@ -104,7 +104,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-5 pb-12">
       <PageHeader
         title="Settings"
         description="Configure your business and application."
@@ -115,7 +115,7 @@ export default function SettingsPage() {
       ) : (
         <div className="mx-auto max-w-5xl space-y-5">
           {/* BUSINESS PROFILE */}
-          <section className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
+          <section className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
             <div className="p-4 border-b bg-muted/20">
               <div className="flex items-center space-x-2">
                 <Building2 className="h-5 w-5 text-primary" />
