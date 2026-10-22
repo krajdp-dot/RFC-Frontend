@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { fetchApi } from "@/lib/fetchApi";
+import { todayBusinessDate } from "@/lib/businessDate";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -26,25 +27,20 @@ export default function MoneyFlowPage() {
         setLoading(true);
         setError("");
         
-        const now = new Date();
-        let startDate = new Date();
-        
-        if (period === "Today") {
-          // no adjustment — startDate stays as today
-        } else if (period === "This Week") {
-          startDate.setDate(now.getDate() - now.getDay());
+        const endDate = todayBusinessDate();
+        let startDate = endDate;
+
+        if (period === "This Week") {
+          // RFC weeks begin on Sunday. Compute from the IST business-date
+          // string to avoid a UTC/local-calendar rollover around midnight.
+          const sundayAnchor = new Date(`${endDate}T12:00:00Z`);
+          sundayAnchor.setUTCDate(sundayAnchor.getUTCDate() - sundayAnchor.getUTCDay());
+          startDate = sundayAnchor.toISOString().slice(0, 10);
         } else if (period === "This Month") {
-          startDate.setDate(1);
+          startDate = `${endDate.slice(0, 7)}-01`;
         }
 
-        // Date-only (YYYY-MM-DD), matching every other date-range endpoint
-        // in this app — a full ISO timestamp here was being parsed as a
-        // business-date string one component down, which is not what it is.
-        const toDateStr = (d: Date) => d.toISOString().slice(0, 10);
-        const params = new URLSearchParams({
-          startDate: toDateStr(startDate),
-          endDate: toDateStr(now),
-        });
+        const params = new URLSearchParams({ startDate, endDate });
 
         const response = await fetchApi(`/reports/money-flow?${params.toString()}`);
         setData(response);
