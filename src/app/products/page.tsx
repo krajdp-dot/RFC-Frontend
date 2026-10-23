@@ -16,7 +16,6 @@ import {
 import { fetchApi } from "@/lib/fetchApi";
 import { AddProductModal } from "@/components/inventory/AddProductModal";
 import { PERMISSIONS } from "@/lib/permissions";
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -29,7 +28,6 @@ export default function ProductsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
-  const { can } = useAuth();
 
   async function loadProducts() {
     try {
