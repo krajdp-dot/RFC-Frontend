@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 import { PERMISSIONS } from "@/lib/permissions";
-import { useAuth } from "@/contexts/AuthContext";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -33,7 +32,6 @@ export default function SalesPage() {
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [deletingSaleId, setDeletingSaleId] = useState<string | null>(null);
-  const { can } = useAuth();
 
   async function loadSales() {
     try {
