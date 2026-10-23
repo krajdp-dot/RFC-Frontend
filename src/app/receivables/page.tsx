@@ -176,8 +176,8 @@ export default function ReceivablesPage() {
                         {r.customerName}
                       </Link>
                       {reminderFeedback?.customerId === r.customerId && (
-                        <p role="status" className={`mt-1 max-w-[220px] text-[11px] font-medium leading-4 ${reminderFeedback.kind === "success" ? "text-emerald-700" : "text-destructive"}`}>
-                          {reminderFeedback.message}
+                        <p role="status" className={`mt-1 max-w-[220px] text-[11px] font-medium leading-4 ${reminderFeedback?.kind === "success" ? "text-emerald-700" : "text-destructive"}`}>
+                          {reminderFeedback?.message}
                         </p>
                       )}
                     </td>
