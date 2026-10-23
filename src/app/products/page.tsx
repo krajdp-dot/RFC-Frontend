@@ -154,7 +154,7 @@ export default function ProductsPage() {
                   <td className="px-4 py-3 text-right tabular-nums">{p.minMarginPct != null ? `${p.minMarginPct}%` : "—"}</td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
                     <Button variant="ghost" size="sm" onClick={() => openEdit(p)}>Edit</Button>
-                    {can(PERMISSIONS.PRODUCTS_DELETE) && (
+                    {true && (
                       <Button
                         type="button"
                         variant="ghost"
