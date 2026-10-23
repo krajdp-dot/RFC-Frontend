@@ -28,8 +28,8 @@ export default function LoginPage() {
     try {
       const data = await fetchApi("/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      }, { redirectOn401: false });
       
       login(data.token, data.user, data.business);
       router.push("/");
