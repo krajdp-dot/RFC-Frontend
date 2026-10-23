@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Plus, Search, RefreshCw } from "lucide-react";
+import { Plus, Search, RefreshCw, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 import { PERMISSIONS } from "@/lib/permissions";
+import { useAuth } from "@/contexts/AuthContext";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -28,6 +29,8 @@ export default function PurchasesPage() {
   const debouncedSearch = useDebounce(search, 400);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
+  const [deletingPurchaseId, setDeletingPurchaseId] = useState<string | null>(null);
+  const { can } = useAuth();
 
   async function loadPurchases() {
     try {
@@ -67,6 +70,24 @@ export default function PurchasesPage() {
   useEffect(() => {
     loadPurchases();
   }, [debouncedSearch, page]);
+
+  async function handleDeletePurchase(purchase: any) {
+    const label = `${purchase.purchaseReference || purchase.id} — ${purchase.supplier?.name || "Unknown supplier"} — ${formatCurrency(purchase.landedCost)}`;
+    if (!window.confirm(`Delete this mistaken purchase?\\n\\n${label}\\n\\nOnly unpaid purchases with completely unused stock can be deleted. Purchases with payments, sales, returns or changed stock are blocked for safety. An audit record is retained.`)) return;
+    setDeletingPurchaseId(purchase.id);
+    setError("");
+    try {
+      await fetchApi(`/purchases/${encodeURIComponent(purchase.id)}`, {
+        method: "DELETE",
+        body: JSON.stringify({ reason: "Mistaken purchase entry deleted by owner" }),
+      });
+      await loadPurchases();
+    } catch (err: any) {
+      setError(err.message || "Failed to delete purchase");
+    } finally {
+      setDeletingPurchaseId(null);
+    }
+  }
 
   const metrics = [
     { label: "Total Purchases", value: meta?.total?.toString() || purchases.length.toString() },
@@ -132,6 +153,7 @@ export default function PurchasesPage() {
                   <th className="px-4 py-3 font-medium text-right">Paid</th>
                   <th className="px-4 py-3 font-medium text-right">Credit</th>
                   <th className="px-4 py-3 font-medium text-center">Status</th>
+                  {can(PERMISSIONS.PURCHASES_DELETE) && <th className="px-4 py-3 font-medium text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -150,6 +172,22 @@ export default function PurchasesPage() {
                     <td className="px-4 py-3 text-center">
                       <StatusBadge variant={purchase.status?.toLowerCase() as any} label={purchase.status} />
                     </td>
+                    {can(PERMISSIONS.PURCHASES_DELETE) && (
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          disabled={deletingPurchaseId === purchase.id}
+                          onClick={() => handleDeletePurchase(purchase)}
+                          aria-label={`Delete mistaken purchase ${purchase.purchaseReference || purchase.id}`}
+                          title="Delete mistaken purchase"
+                        >
+                          <Trash2 className={`h-4 w-4 ${deletingPurchaseId === purchase.id ? "opacity-50" : ""}`} />
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
