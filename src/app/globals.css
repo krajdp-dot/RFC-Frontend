@@ -423,7 +423,10 @@
 
   main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]):hover,
   nav :is(a, button, [role="button"]):hover {
-    text-shadow: 0 0 0.7em color-mix(in oklab, var(--primary), transparent 83%);
+    text-shadow:
+      0 0 1px color-mix(in oklab, var(--primary), transparent 12%),
+      0 0 7px color-mix(in oklab, var(--primary), transparent 48%),
+      0 0 14px color-mix(in oklab, var(--primary), transparent 70%);
   }
 
   /* Avoid applying text glow to data-entry controls or their placeholder text. */
@@ -438,7 +441,7 @@
 
   .dark main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]):hover,
   .dark nav :is(a, button, [role="button"]):hover {
-    text-shadow: 0 0 0.85em color-mix(in oklab, var(--primary), transparent 72%);
+    text-shadow: 0 0 1px color-mix(in oklab, var(--primary), transparent 5%), 0 0 8px color-mix(in oklab, var(--primary), transparent 35%), 0 0 16px color-mix(in oklab, var(--primary), transparent 58%);
   }
 }
 
