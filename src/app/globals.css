@@ -407,3 +407,44 @@
     opacity: 1;
   }
 }
+
+
+/* RFC OS text hover finish: a restrained emerald halo, never a neon effect. */
+@layer utilities {
+  main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]),
+  nav :is(a, button, [role="button"]) {
+    transition:
+      color 160ms ease,
+      text-shadow 180ms ease,
+      opacity 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]):hover,
+  nav :is(a, button, [role="button"]):hover {
+    text-shadow: 0 0 0.7em color-mix(in oklab, var(--primary), transparent 83%);
+  }
+
+  /* Avoid applying text glow to data-entry controls or their placeholder text. */
+  main input:hover,
+  main select:hover,
+  main textarea:hover,
+  main input:focus,
+  main select:focus,
+  main textarea:focus {
+    text-shadow: none;
+  }
+
+  .dark main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]):hover,
+  .dark nav :is(a, button, [role="button"]):hover {
+    text-shadow: 0 0 0.85em color-mix(in oklab, var(--primary), transparent 72%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]),
+  nav :is(a, button, [role="button"]) {
+    transition: none;
+  }
+}
