@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Plus, Search, RefreshCw } from "lucide-react";
+import { Plus, Search, RefreshCw, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip"
 import { OfflineQueueNotice } from "@/components/offline/OfflineQueueNotice";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 import { PERMISSIONS } from "@/lib/permissions";
+import { useAuth } from "@/contexts/AuthContext";
 
 function formatCurrency(amount: string | number) {
   if (amount === undefined || amount === null) return "—";
@@ -31,6 +32,8 @@ export default function SalesPage() {
   const debouncedSearch = useDebounce(search, 400);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
+  const [deletingSaleId, setDeletingSaleId] = useState<string | null>(null);
+  const { can } = useAuth();
 
   async function loadSales() {
     try {
@@ -70,6 +73,24 @@ export default function SalesPage() {
   useEffect(() => {
     loadSales();
   }, [debouncedSearch, page]);
+
+  async function handleDeleteSale(sale: any) {
+    const label = `${sale.saleReference || sale.id} — ${sale.customer?.name || "Unknown customer"} — ${formatCurrency(sale.total)}`;
+    if (!window.confirm(`Delete this mistaken sale?\\n\\n${label}\\n\\nThis restores the sale's stock and removes its sale ledger entries. Sales with payments or returns are blocked for safety. An audit record is retained.`)) return;
+    setDeletingSaleId(sale.id);
+    setError("");
+    try {
+      await fetchApi(`/sales/${encodeURIComponent(sale.id)}`, {
+        method: "DELETE",
+        body: JSON.stringify({ reason: "Mistaken sale entry deleted by owner" }),
+      });
+      await loadSales();
+    } catch (err: any) {
+      setError(err.message || "Failed to delete sale");
+    } finally {
+      setDeletingSaleId(null);
+    }
+  }
 
   const metrics = [
     { label: "Total Sales", value: meta?.total?.toString() || sales.length.toString() },
@@ -138,6 +159,7 @@ export default function SalesPage() {
                   <th className="px-4 py-3 font-medium text-right">Received</th>
                   <th className="px-4 py-3 font-medium text-right">Credit</th>
                   <th className="px-4 py-3 font-medium text-center">Status</th>
+                  {can(PERMISSIONS.SALES_DELETE) && <th className="px-4 py-3 font-medium text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -156,6 +178,22 @@ export default function SalesPage() {
                     <td className="px-4 py-3 text-center">
                       <StatusBadge variant={sale.status?.toLowerCase() as any} label={sale.status} />
                     </td>
+                    {can(PERMISSIONS.SALES_DELETE) && (
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          disabled={deletingSaleId === sale.id}
+                          onClick={() => handleDeleteSale(sale)}
+                          aria-label={`Delete mistaken sale ${sale.saleReference || sale.id}`}
+                          title="Delete mistaken sale"
+                        >
+                          <Trash2 className={`h-4 w-4 ${deletingSaleId === sale.id ? "opacity-50" : ""}`} />
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
