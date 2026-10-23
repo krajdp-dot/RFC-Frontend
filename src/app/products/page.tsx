@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
@@ -15,6 +16,7 @@ import {
 import { fetchApi } from "@/lib/fetchApi";
 import { AddProductModal } from "@/components/inventory/AddProductModal";
 import { PERMISSIONS } from "@/lib/permissions";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -26,12 +28,14 @@ export default function ProductsPage() {
   const [form, setForm] = useState<any>({});
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const { can } = useAuth();
 
   async function loadProducts() {
     try {
       setLoading(true);
       setError("");
-      const res = await fetchApi("/products?limit=200");
+      const res = await fetchApi("/products?limit=200&isActive=true");
       setProducts(Array.isArray(res) ? res : res?.data || []);
     } catch (err: any) {
       setError(err.message || "Failed to load products");
@@ -86,6 +90,23 @@ export default function ProductsPage() {
     }
   }
 
+  async function handleDeleteProduct(product: any) {
+    if (!window.confirm(`Remove "${product.name}" from the active product catalogue?\\n\\nPast sales, purchases, stock movements and reports will be preserved. This is an archive, not a permanent erasure.`)) return;
+    setDeletingProductId(product.id);
+    setError("");
+    try {
+      await fetchApi(`/products/${encodeURIComponent(product.id)}`, {
+        method: "DELETE",
+        body: JSON.stringify({ reason: "Product removed from active catalogue by owner" }),
+      });
+      await loadProducts();
+    } catch (err: any) {
+      setError(err.message || "Failed to remove product");
+    } finally {
+      setDeletingProductId(null);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 p-5 w-full max-w-6xl mx-auto pb-10">
       <PageHeader
@@ -115,7 +136,7 @@ export default function ProductsPage() {
                 <th className="px-4 py-3 font-medium text-right">Reorder Qty</th>
                 <th className="px-4 py-3 font-medium text-right">Markup %</th>
                 <th className="px-4 py-3 font-medium text-right">Min Margin %</th>
-                <th className="px-4 py-3 font-medium"></th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -131,8 +152,22 @@ export default function ProductsPage() {
                   <td className="px-4 py-3 text-right tabular-nums">{p.reorderQty ?? "—"}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{p.defaultMarkupPct != null ? `${p.defaultMarkupPct}%` : "—"}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{p.minMarginPct != null ? `${p.minMarginPct}%` : "—"}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
                     <Button variant="ghost" size="sm" onClick={() => openEdit(p)}>Edit</Button>
+                    {can(PERMISSIONS.PRODUCTS_DELETE) && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="ml-1 h-8 w-8 text-muted-foreground hover:text-destructive"
+                        disabled={deletingProductId === p.id}
+                        onClick={() => handleDeleteProduct(p)}
+                        aria-label={`Remove product ${p.name}`}
+                        title="Remove product from active catalogue"
+                      >
+                        <Trash2 className={`h-4 w-4 ${deletingProductId === p.id ? "opacity-50" : ""}`} />
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
