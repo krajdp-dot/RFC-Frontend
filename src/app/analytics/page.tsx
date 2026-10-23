@@ -6,7 +6,6 @@ import {
   ArrowRight,
   BarChart3,
   CalendarDays,
-  BarChart3,
   CircleDollarSign,
   Package,
   RefreshCw,
