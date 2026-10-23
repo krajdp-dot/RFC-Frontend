@@ -153,7 +153,7 @@ export default function PurchasesPage() {
                   <th className="px-4 py-3 font-medium text-right">Paid</th>
                   <th className="px-4 py-3 font-medium text-right">Credit</th>
                   <th className="px-4 py-3 font-medium text-center">Status</th>
-                  {can(PERMISSIONS.PURCHASES_DELETE) && <th className="px-4 py-3 font-medium text-right">Actions</th>}
+                  <th className="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -172,7 +172,7 @@ export default function PurchasesPage() {
                     <td className="px-4 py-3 text-center">
                       <StatusBadge variant={purchase.status?.toLowerCase() as any} label={purchase.status} />
                     </td>
-                    {can(PERMISSIONS.PURCHASES_DELETE) && (
+                    {true && (
                       <td className="px-4 py-3 text-right">
                         <Button
                           type="button"
