@@ -159,7 +159,7 @@ export default function SalesPage() {
                   <th className="px-4 py-3 font-medium text-right">Received</th>
                   <th className="px-4 py-3 font-medium text-right">Credit</th>
                   <th className="px-4 py-3 font-medium text-center">Status</th>
-                  {can(PERMISSIONS.SALES_DELETE) && <th className="px-4 py-3 font-medium text-right">Actions</th>}
+                  <th className="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -178,7 +178,7 @@ export default function SalesPage() {
                     <td className="px-4 py-3 text-center">
                       <StatusBadge variant={sale.status?.toLowerCase() as any} label={sale.status} />
                     </td>
-                    {can(PERMISSIONS.SALES_DELETE) && (
+                    {true && (
                       <td className="px-4 py-3 text-right">
                         <Button
                           type="button"
