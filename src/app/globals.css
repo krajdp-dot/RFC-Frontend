@@ -409,39 +409,23 @@
 }
 
 
-/* RFC OS text hover finish: a restrained emerald halo, never a neon effect. */
+/* Quiet hover finish: gentle transitions only, no glow or text shadow. */
 @layer utilities {
   main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]),
   nav :is(a, button, [role="button"]) {
-    transition:
-      color 160ms ease,
-      text-shadow 180ms ease,
-      opacity 160ms ease,
-      background-color 160ms ease,
-      border-color 160ms ease;
+    transition: color 150ms ease, opacity 150ms ease, background-color 150ms ease, border-color 150ms ease;
   }
 
-  main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]):hover,
-  nav :is(a, button, [role="button"]):hover {
-    text-shadow:
-      0 0 1px color-mix(in oklab, var(--primary), transparent 12%),
-      0 0 7px color-mix(in oklab, var(--primary), transparent 48%),
-      0 0 14px color-mix(in oklab, var(--primary), transparent 70%);
+  main a:hover,
+  nav a:hover {
+    color: color-mix(in oklab, var(--foreground), var(--primary) 18%);
   }
 
-  /* Avoid applying text glow to data-entry controls or their placeholder text. */
-  main input:hover,
-  main select:hover,
-  main textarea:hover,
-  main input:focus,
-  main select:focus,
-  main textarea:focus {
+  main button:hover,
+  nav button:hover,
+  main [role="button"]:hover,
+  nav [role="button"]:hover {
     text-shadow: none;
-  }
-
-  .dark main :is(h1, h2, h3, h4, p, a, button, label, th, td, [role="button"]):hover,
-  .dark nav :is(a, button, [role="button"]):hover {
-    text-shadow: 0 0 1px color-mix(in oklab, var(--primary), transparent 5%), 0 0 8px color-mix(in oklab, var(--primary), transparent 35%), 0 0 16px color-mix(in oklab, var(--primary), transparent 58%);
   }
 }
 
