@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Plus, Search, RefreshCw } from "lucide-react";
+import { Plus, Search, RefreshCw, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MetricStrip } from "@/components/shared/MetricStrip";
 import { fetchApi } from "@/lib/fetchApi";
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Pagination, PaginationMeta } from "@/components/shared/Pagination";
 import { PERMISSIONS } from "@/lib/permissions";
+import { useAuth } from "@/contexts/AuthContext";
 import { QuickPick } from "@/components/shared/QuickPick";
 
 function formatCurrency(amount: string | number) {
@@ -53,6 +54,8 @@ export default function ExpensesPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
+  const { can } = useAuth();
   const todayStr = todayBusinessDate();
   const [form, setForm] = useState({
     categoryId: "",
@@ -168,6 +171,28 @@ export default function ExpensesPage() {
       setFormError(err.message || "Failed to record expense");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+
+  async function handleDeleteExpense(expense: any) {
+    const label = `${expense.category?.name || "Expense"} — ${expense.description || "entry"} — ${formatCurrency(expense.amount)}`;
+    if (!window.confirm(`Delete this mistaken expense?\n\n${label}\n\nThis removes the expense and its ledger entries from the backend. An audit record is retained. Closed business dates cannot be changed.`)) {
+      return;
+    }
+
+    setDeletingExpenseId(expense.id);
+    setError("");
+    try {
+      await fetchApi(`/expenses/${encodeURIComponent(expense.id)}`, {
+        method: "DELETE",
+        body: JSON.stringify({ reason: "Mistaken expense entry deleted by owner" }),
+      });
+      await loadData();
+    } catch (err: any) {
+      setError(err.message || "Failed to delete expense");
+    } finally {
+      setDeletingExpenseId(null);
     }
   }
 
@@ -360,6 +385,7 @@ export default function ExpensesPage() {
                   <th className="px-4 py-3 font-medium text-right">Amount</th>
                   <th className="px-4 py-3 font-medium text-center">Method</th>
                   <th className="px-4 py-3 font-medium">Account</th>
+                  {can(PERMISSIONS.EXPENSES_DELETE) && <th className="px-4 py-3 font-medium text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -375,6 +401,22 @@ export default function ExpensesPage() {
                     <td className="px-4 py-3 font-semibold tabular-nums text-right">{formatCurrency(expense.amount)}</td>
                     <td className="px-4 py-3 text-center text-muted-foreground">{expense.paymentMethod}</td>
                     <td className="px-4 py-3 text-muted-foreground">{expense.account?.name || '—'}</td>
+                    {can(PERMISSIONS.EXPENSES_DELETE) && (
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          disabled={deletingExpenseId === expense.id}
+                          onClick={() => handleDeleteExpense(expense)}
+                          aria-label={`Delete expense ${expense.description || expense.id}`}
+                          title="Delete mistaken expense"
+                        >
+                          <Trash2 className={`h-4 w-4 ${deletingExpenseId === expense.id ? "opacity-50" : ""}`} />
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
